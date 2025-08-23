@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36127.28 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagementRPG.API", "ManagementRPG.API\ManagementRPG.API.csproj", "{17B286DA-E9E5-421D-AF74-506AE83E27EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagementRPG.Application", "ManagementRPG.Application\ManagementRPG.Application.csproj", "{E26C43B6-87D9-46B6-AEBA-1252108D937D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagementRPG.Domain", "ManagementRPG.Domain\ManagementRPG.Domain.csproj", "{DDB32EF8-1FEF-4652-92D5-DEBAAE9E8728}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{4750E4C4-A8CA-40C9-A067-BFE6427CCDC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestsGeneral", "UnitTestsGeneral\UnitTestsGeneral.csproj", "{255E5410-B255-4B9B-9A6D-D22D59675894}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagementRPG.Infrastructure", "ManagementRPG.Infrastructure\ManagementRPG.Infrastructure.csproj", "{3FBB8B2C-8F49-4D00-B6C3-D7170377C299}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{17B286DA-E9E5-421D-AF74-506AE83E27EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17B286DA-E9E5-421D-AF74-506AE83E27EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17B286DA-E9E5-421D-AF74-506AE83E27EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17B286DA-E9E5-421D-AF74-506AE83E27EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E26C43B6-87D9-46B6-AEBA-1252108D937D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E26C43B6-87D9-46B6-AEBA-1252108D937D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E26C43B6-87D9-46B6-AEBA-1252108D937D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E26C43B6-87D9-46B6-AEBA-1252108D937D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDB32EF8-1FEF-4652-92D5-DEBAAE9E8728}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDB32EF8-1FEF-4652-92D5-DEBAAE9E8728}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDB32EF8-1FEF-4652-92D5-DEBAAE9E8728}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDB32EF8-1FEF-4652-92D5-DEBAAE9E8728}.Release|Any CPU.Build.0 = Release|Any CPU
+		{255E5410-B255-4B9B-9A6D-D22D59675894}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{255E5410-B255-4B9B-9A6D-D22D59675894}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{255E5410-B255-4B9B-9A6D-D22D59675894}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{255E5410-B255-4B9B-9A6D-D22D59675894}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FBB8B2C-8F49-4D00-B6C3-D7170377C299}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FBB8B2C-8F49-4D00-B6C3-D7170377C299}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FBB8B2C-8F49-4D00-B6C3-D7170377C299}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FBB8B2C-8F49-4D00-B6C3-D7170377C299}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{17B286DA-E9E5-421D-AF74-506AE83E27EF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{E26C43B6-87D9-46B6-AEBA-1252108D937D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{DDB32EF8-1FEF-4652-92D5-DEBAAE9E8728} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{255E5410-B255-4B9B-9A6D-D22D59675894} = {4750E4C4-A8CA-40C9-A067-BFE6427CCDC0}
+		{3FBB8B2C-8F49-4D00-B6C3-D7170377C299} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {971BCAE5-C7EB-449B-AC92-2FDCE8C92283}
+	EndGlobalSection
+EndGlobal
