@@ -6,25 +6,32 @@ using ManagementRPG.Domain.Shared.Commands;
 
 namespace ManagementRPG.Domain.Abstractions.Handlers
 {
-    public interface IHandlerEntity<T, TId, TCommandInsert, TCommandUpdate, TCommandQuery> : IHandler
-        where T : Entity<TId>
+    public interface IHandlerEntity<TId, TCommandInsert, TCommandUpdate> : IHandler
         where TCommandInsert : ICommandInsert
         where TCommandUpdate : ICommandUpdate<TId>
-        where TCommandQuery : IQueryResult<TId>
     {
-        public Task<CommandResult<IEnumerable<TCommandQuery>>> HandleGetAll();
-        public Task<CommandResult<TCommandQuery>> HandleGet(TId id);
+        
         public Task<CommandResult> HandleInsert(TCommandInsert command);
         public Task<CommandResult> HandleUpdate(TCommandUpdate command);
     }
 
-    public interface IHandlerEntity<T, TId, TUId, TCommandInsert, TCommandUpdate, TCommandQuery>
-           : IHandlerEntity<T, TId, TCommandInsert, TCommandUpdate, TCommandQuery>
-       where T : Entity<TId, TUId>
+    public interface IHandlerEntity<TId, TUId, TCommandInsert, TCommandUpdate>
+           : IHandlerEntity<TId, TCommandInsert, TCommandUpdate>
        where TCommandInsert : ICommandInsert<TUId>
        where TCommandUpdate : ICommandUpdate<TId, TUId>
+    {
+    }
+
+    public interface IHandlerQuery<TCommandQuery, TId> : IHandler
         where TCommandQuery : IQueryResult<TId>
     {
-        public Task<CommandResult> HandleRemove(TId id);
+        public Task<CommandResult<IEnumerable<TCommandQuery>>> HandleGetAll();
+        public Task<CommandResult<TCommandQuery>> HandleGet(TId id);
+    }
+
+    public interface IHandlerQuery<TCommandQuery, TId, TUId> : IHandlerQuery<TCommandQuery, TId>
+        where TCommandQuery : IQueryResult<TId, TUId>
+    {
+
     }
 }

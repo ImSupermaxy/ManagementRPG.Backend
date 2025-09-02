@@ -1,4 +1,4 @@
-﻿using ManagementRPG.Domain.Abstractions.Clock;
+﻿using ManagementRPG.Application.Abstractions.Clock;
 
 namespace ManagementRPG.Infrastructure.Clock
 {

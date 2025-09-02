@@ -1,19 +1,21 @@
 ﻿using Asp.Versioning;
-using ManagementRPG.Domain.Abstractions.Clock;
+using ManagementRPG.Application.Abstractions.Clock;
+using ManagementRPG.Application.Global.Campanhas.Mappers;
 using ManagementRPG.Domain.Abstractions.Context;
-using ManagementRPG.Domain.Mappers.Campanhas;
-using ManagementRPG.Domain.Repositories.Campanhas;
+using ManagementRPG.Domain.Global.Campanhas.Repositories;
+using ManagementRPG.Domain.Shared.ApiConfig.Authentication;
 using ManagementRPG.Infrastructure.Authentication;
 using ManagementRPG.Infrastructure.Clock;
 using ManagementRPG.Infrastructure.Context;
 using ManagementRPG.Infrastructure.Context.MySql;
+using ManagementRPG.Infrastructure.Global.Campanhas.Repositories;
 using ManagementRPG.Infrastructure.Providers;
-using ManagementRPG.Infrastructure.Repositories.Campanhas;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Quartz;
+using System.Configuration;
 using System.Text;
 
 namespace ManagementRPG.Infrastructure
@@ -73,9 +75,11 @@ namespace ManagementRPG.Infrastructure
             //    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             //    .AddJwtBearer();
 
+            //AppSettings
+            services.AddSingleton<IAppSettings>(configuration.GetSection("GeneralSettings").Get<AppSettings>()!);
 
             // Obtém a seção "AppSettings" do arquivo de configuração
-            var appSettingsSection = configuration.GetSection("AppSettings");
+            var appSettingsSection = configuration.GetSection("GeneralSettings");
 
             // Configura a classe AppSettings para ser injetada via DI
             services.Configure<AppSettings>(appSettingsSection);

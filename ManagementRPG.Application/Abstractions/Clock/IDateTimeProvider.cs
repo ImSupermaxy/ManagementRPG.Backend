@@ -1,4 +1,4 @@
-﻿namespace ManagementRPG.Domain.Abstractions.Clock
+﻿namespace ManagementRPG.Application.Abstractions.Clock
 {
     public interface IDateTimeProvider
     {

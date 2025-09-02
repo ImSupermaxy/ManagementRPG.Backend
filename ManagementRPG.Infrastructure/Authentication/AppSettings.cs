@@ -1,10 +1,12 @@
-﻿namespace ManagementRPG.Infrastructure.Authentication
+﻿using ManagementRPG.Domain.Shared.ApiConfig.Authentication;
+
+namespace ManagementRPG.Infrastructure.Authentication
 {
-    public class AppSettings
+    public class AppSettings : IAppSettings
     {
-        public string Secret { get; set; }
-        public int ExpirationHours { get; set; }
-        public string Sender { get; set; }
-        public string ValidAt { get; set; }
+        public string Secret { get; init; }
+        public int ExpirationHours { get; init; }
+        public string Sender { get; init; }
+        public string ValidAt { get; init; }
     }
 }

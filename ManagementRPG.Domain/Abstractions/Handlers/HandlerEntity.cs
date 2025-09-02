@@ -6,11 +6,12 @@ using ManagementRPG.Domain.Abstractions.Queries.Results;
 using ManagementRPG.Domain.Abstractions.Repositories;
 using ManagementRPG.Domain.Shared.ApiConfig;
 using ManagementRPG.Domain.Shared.Commands;
+using System.Security.Cryptography;
 
 namespace ManagementRPG.Domain.Abstractions.Handlers
 {
     public class HandlerEntity<T, TId, TCommandInsert, TCommandUpdate, TCommandQuery> 
-            : IHandlerEntity<T, TId, TCommandInsert, TCommandUpdate, TCommandQuery>
+            : IHandlerEntity<TId, TCommandInsert, TCommandUpdate>
         where T : Entity<TId>
         where TCommandInsert : ICommandInsert
         where TCommandUpdate : ICommandUpdate<TId>
@@ -26,41 +27,6 @@ namespace ManagementRPG.Domain.Abstractions.Handlers
             Mapper = mapper;
         }
 
-        public virtual async Task<CommandResult<IEnumerable<TCommandQuery>>> HandleGetAll()
-        {
-            try
-            {
-                var result = await Repository.Get();
-                if (result == null)
-                    return new CommandResult<IEnumerable<TCommandQuery>>(true, "Nenhum registro encontrado", 
-                        Enumerable.Empty<TCommandQuery>());
-
-                return new CommandResult<IEnumerable<TCommandQuery>>(true, "", result);
-            }
-            catch (Exception ex)
-            {
-                var message = $"Erro ao obter as entidades {typeof(T).GetType().Name}" + (!RunMode.IsProd() ? $": {ex.Message}" : "");
-                return new CommandResult<IEnumerable<TCommandQuery>>(false, message, Enumerable.Empty<TCommandQuery>());
-            }
-        }
-
-        public virtual async Task<CommandResult<TCommandQuery>> HandleGet(TId id)
-        {
-            try
-            {
-                var result = await Repository.GetById(id);
-                if (result == null)
-                    return new CommandResult<TCommandQuery>(true, "Registro não encontrado");
-
-                return new CommandResult<TCommandQuery>(true, "", result);
-            }
-            catch (Exception ex)
-            {
-                var message = $"Erro ao obter a entidade {typeof(T).GetType().Name}" + (!RunMode.IsProd() ? $": {ex.Message}" : "");
-                return new CommandResult<TCommandQuery>(false, message, default!);
-            }
-        }
-
         public virtual async Task<CommandResult> HandleInsert(TCommandInsert command)
         {
             try
@@ -70,11 +36,11 @@ namespace ManagementRPG.Domain.Abstractions.Handlers
                 if (!entity.IsValid)
                     return new CommandResult(false, "Entidade não é Valida!", entity.Errors);
 
-                var commandResult = (await Repository!.Insert(entity) as CommandResult);
-                if (!commandResult!.Success)
+                var newId = await Repository!.Insert(entity);
+                if (newId != IdentifierTypeManager<TId>.GetDefaultValue())
                     return new CommandResult(false, $"A entidade {typeof(T).GetType().Name} não foi inserida!", entity.Errors);
 
-                return commandResult;
+                return new CommandResult(true, "", newId);
             }
             catch (Exception ex)
             {
@@ -109,43 +75,76 @@ namespace ManagementRPG.Domain.Abstractions.Handlers
 
     public class HandlerEntity<T, TId, TUId, TCommandInsert, TCommandUpdate, TCommandQuery>
             : HandlerEntity<T, TId, TCommandInsert, TCommandUpdate, TCommandQuery>,
-            IHandlerEntity<T, TId, TUId, TCommandInsert, TCommandUpdate, TCommandQuery>
+            IHandlerEntity<TId, TUId, TCommandInsert, TCommandUpdate>
         where T : Entity<TId, TUId>
         where TCommandInsert : ICommandInsert<TUId>
         where TCommandUpdate : ICommandUpdate<TId, TUId>
         where TCommandQuery : IQueryResult<TId, TUId>
     {
-        protected IRepository<T, TId, TUId, TCommandQuery> RepositoryB { get; set; }
-        protected IMapperEntity<T, TId, TUId, TCommandInsert, TCommandUpdate, TCommandQuery> MapperB { get; set; }
 
         protected HandlerEntity(IRepository<T, TId, TUId, TCommandQuery> repository, 
             IMapperEntity<T, TId, TUId, TCommandInsert, TCommandUpdate, TCommandQuery> mapper) 
             : base(repository, mapper)
         {
-            RepositoryB = repository;
-            MapperB = mapper;
+
         }
 
+    }
 
-        public virtual async Task<CommandResult> HandleRemove(TId id)
+    public class HandlerQuery<T, TCommandQuery, TId> : IHandlerQuery<TCommandQuery, TId>
+        where T : Entity<TId>
+        where TCommandQuery : IQueryResult<TId>
+    {
+        protected IRepository<T, TId, TCommandQuery> Repository { get; set; }
+
+        public HandlerQuery(IRepository<T, TId, TCommandQuery> repository)
+        {
+            Repository = repository;
+        }
+
+        public virtual async Task<CommandResult<IEnumerable<TCommandQuery>>> HandleGetAll()
         {
             try
             {
-                var query = await Repository.GetById(id);
-                var entity = MapperB.GetEntity(query);
+                var result = await Repository.Get();
+                if (result == null)
+                    return new CommandResult<IEnumerable<TCommandQuery>>(true, "Nenhum registro encontrado",
+                        Enumerable.Empty<TCommandQuery>());
 
-                entity.InactivateEntity();
-
-                if (!(await RepositoryB.Delete(entity)))
-                    return new CommandResult(false, $"A entidade {typeof(T).GetType().Name} não foi exlcuida", entity.Errors);
-
-                return new CommandResult(true, $"A entidade {typeof(T).GetType().Name} excluida com sucesso!");
+                return new CommandResult<IEnumerable<TCommandQuery>>(true, "", result);
             }
             catch (Exception ex)
             {
-                var message = $"Erro ao excluir a entidade {typeof(T).GetType().Name}" + (!RunMode.IsProd() ? $": {ex.Message}" : "");
-                return new CommandResult(false, message);
+                var message = $"Erro ao obter as entidades {typeof(T).GetType().Name}" + (!RunMode.IsProd() ? $": {ex.Message}" : "");
+                return new CommandResult<IEnumerable<TCommandQuery>>(false, message, Enumerable.Empty<TCommandQuery>());
             }
+        }
+
+        public virtual async Task<CommandResult<TCommandQuery>> HandleGet(TId id)
+        {
+            try
+            {
+                var result = await Repository.GetById(id);
+                if (result == null)
+                    return new CommandResult<TCommandQuery>(true, "Registro não encontrado");
+
+                return new CommandResult<TCommandQuery>(true, "", result);
+            }
+            catch (Exception ex)
+            {
+                var message = $"Erro ao obter a entidade {typeof(T).GetType().Name}" + (!RunMode.IsProd() ? $": {ex.Message}" : "");
+                return new CommandResult<TCommandQuery>(false, message, default!);
+            }
+        }
+    }
+
+    public class HandlerQuery<T, TCommandQuery, TId, TUId> : HandlerQuery<T, TCommandQuery, TId>
+        where T : Entity<TId, TUId>
+        where TCommandQuery : IQueryResult<TId, TUId>
+    {
+        public HandlerQuery(IRepository<T, TId, TUId, TCommandQuery> repository) 
+            : base(repository)
+        { 
         }
     }
 }

@@ -54,11 +54,17 @@ namespace ManagementRPG.Domain.Abstractions.Repositories
                                     commandType: CommandType.StoredProcedure))!;
         }
 
-        public Task<IEnumerable<TCommandQuery>> GetByProperty<TProp>(TProp id)
-        {
-            //Elaborate better how implemente this...
-            throw new NotImplementedException();
-        }
+        //public Task<TCommandQuery> GetByProperty<TProp>(TProp prop, string name)
+        //{
+        //    //Elaborate better how implemente this...
+        //    throw new NotImplementedException();
+        //}
+
+        //public Task<IEnumerable<TCommandQuery>> GetAllByProperty<TProp>(TProp prop, string name)
+        //{
+        //    //Elaborate better how implemente this...
+        //    throw new NotImplementedException();
+        //}
 
         public async Task<TId> Insert(T entity)
         {
@@ -86,12 +92,12 @@ namespace ManagementRPG.Domain.Abstractions.Repositories
 
         protected virtual object GetInsertObject(T entity)
         {
-            return new { };
+            throw new NotImplementedException();
         }
 
         protected virtual object GetUpdateObject(T entity)
         {
-            return new { };
+            throw new NotImplementedException();
         }
     }
 

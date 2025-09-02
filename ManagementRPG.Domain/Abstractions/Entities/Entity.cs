@@ -3,9 +3,9 @@ using ManagementRPG.Domain.Shared.Enums;
 
 namespace ManagementRPG.Domain.Abstractions.Entities
 {
-    public abstract class Entity<TId>
+    public abstract class Entity<TId> : IEntity
     {
-        public TId Id { get; private set; } = default!;
+        public TId Id { get; private init; } = default!;
         public bool IsValid { get; private set; } = false;
         public IList<ValidationFailure> Errors { get; private set; } = Enumerable.Empty<ValidationFailure>().ToList();
 
