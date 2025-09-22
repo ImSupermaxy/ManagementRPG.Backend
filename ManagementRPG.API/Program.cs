@@ -3,8 +3,6 @@ using ManagementRPG.Domain.Shared.ApiConfig;
 using ManagementRPG.Infrastructure;
 using ManagementRPG.Application;
 using Asp.Versioning.ApiExplorer;
-using Microsoft.AspNetCore.Builder;
-using ManagementRPG.API.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +12,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngularApp",
         builder =>
         {
-            builder.WithOrigins("http://localhost:4204")
+            builder.WithOrigins("http://localhost:44306")
                    .AllowAnyHeader()
                    .AllowAnyMethod();
         });

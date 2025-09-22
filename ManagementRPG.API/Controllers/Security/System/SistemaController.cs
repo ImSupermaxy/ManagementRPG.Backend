@@ -26,7 +26,7 @@ namespace ManagementRPG.API.Controllers.Security.System
         {
             var result = await Sender.Send(new SistemaCommandGetAll());
 
-            if (!result.Success)
+            if (!result.IsSuccess)
                 return NotFound(result);
 
             return Ok(result);
@@ -37,7 +37,7 @@ namespace ManagementRPG.API.Controllers.Security.System
         {
             var result = await Sender.Send(new SistemaCommandGetById(id));
 
-            if (!result.Success)
+            if (!result.IsSuccess)
                 return NotFound(result);
 
             return Ok(result);
@@ -48,7 +48,7 @@ namespace ManagementRPG.API.Controllers.Security.System
         {
             var result = await Sender.Send(command);
 
-            if (!result.Success)
+            if (!result.IsSuccess)
                 return BadRequest(result);
 
             return Created();
@@ -59,7 +59,7 @@ namespace ManagementRPG.API.Controllers.Security.System
         {
             var result = await Sender.Send(command);
 
-            if (!result.Success)
+            if (!result.IsSuccess)
                 return BadRequest(result);
 
             return Created();

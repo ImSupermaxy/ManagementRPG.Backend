@@ -4,7 +4,7 @@ using ManagementRPG.Domain.Security.Usuarios;
 
 namespace ManagementRPG.Application.Security.Usuarios.Commands
 {
-    public sealed class UsuarioCommandRegister : UsuarioGeneral, ICommandResponse
+    public sealed class UsuarioCommandRegister : UsuarioGeneral, ICommandResponse<object>
     {
         public string Password { get; set; }
 

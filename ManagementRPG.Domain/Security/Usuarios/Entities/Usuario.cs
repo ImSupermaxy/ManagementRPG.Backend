@@ -1,4 +1,5 @@
 ﻿using ManagementRPG.Domain.Abstractions.Entities;
+using ManagementRPG.Domain.Security.Usuarios.Enums;
 using ManagementRPG.Domain.Security.Usuarios.Validators;
 using ManagementRPG.Domain.Shared.Enums;
 
@@ -10,7 +11,7 @@ namespace ManagementRPG.Domain.Security.Usuarios.Entities
         public string Email { get; private set; }
         public string Arroba { get; private set; }
         public string Senha { get; private set; }
-        //public IEnumerable<Perfil> Perfis { get; set; }
+        public IList<EPerfil> Perfis { get; set; }
 
         public Usuario(int userId, string nome, string email, string arroba, string senha) 
             : base(userId)
@@ -19,7 +20,7 @@ namespace ManagementRPG.Domain.Security.Usuarios.Entities
             Email = email;
             Arroba = arroba;
             Senha = senha;
-
+            Perfis = new List<EPerfil>() { EPerfil.USUARIO };
             Validate();
         }
 

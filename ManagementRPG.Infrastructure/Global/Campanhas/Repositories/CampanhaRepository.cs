@@ -67,28 +67,30 @@ namespace ManagementRPG.Infrastructure.Global.Campanhas.Repositories
             return new List<CampanhaQueryResult>();
         }
 
-        public async Task<ICommandResult> Insert(Campanha entity)
+        public async Task<int> Insert(Campanha entity)
         {
             if (DataBase != null)
-                DataBase.Add(entity);
+                DataBase.Append(entity);
 
-            return new CommandResult(true, "");
+            AutoIncrementId();
+
+            return DataBase!.LastOrDefault()!.Id;
         }
 
-        public async Task<ICommandResult> Update(Campanha entity)
+        public async Task<bool> Update(Campanha entity)
         {
             if (DataBase == null)
-                return new CommandResult(false, "Banco não iniciado");
+                return false;
 
             var idxEntity = DataBase.ToList().FindIndex(c => c.Id == entity.Id);
             DataBase.ToList()[idxEntity] = entity;
-            return new CommandResult(true, "");
+            return true;
         }
 
-        public async Task<ICommandResult> Delete(Campanha entity)
+        public async Task<bool> Delete(Campanha entity)
         {
             if (DataBase == null)
-                return new CommandResult(false, "");
+                return true;
 
             var listB = DataBase.Select(c => new CampanhaQueryResult()
             {
@@ -106,12 +108,43 @@ namespace ManagementRPG.Infrastructure.Global.Campanhas.Repositories
 
             var values = DataBase.ToList().RemoveAll(c => c.Id == entity.Id);
             if (values == 1)
-                return new CommandResult(true, "");
+                return true;
 
             DataBase = listB.Select(command => new Campanha(command.Id, command.Status, command.UserInsId, command.UserInsData,
                 command.UserModId, command.UserModData, command.MestreId, command.Nome, command.Descricao, command.Sinopse)).ToList();
 
-            return new CommandResult(false, $"{values} Rows affecteds");
+            return true;
+        }
+
+        private bool AutoIncrementId()
+        {
+            var listB = DataBase.Select(c => new CampanhaQueryResult()
+            {
+                Id = c.Id,
+                MestreId = c.MestreId,
+                Nome = c.Nome,
+                Descricao = c.Descricao,
+                Sinopse = c.Sinopse,
+                Status = c.Status,
+                UserInsId = c.UserInsId,
+                UserInsData = c.UserInsData,
+                UserModId = c.UserModId,
+                UserModData = c.UserModData
+            });
+
+            DataBase = listB.Select(command => {
+                var id = 1;
+                var lastInsert = DataBase.LastOrDefault();
+                if (lastInsert != null)
+                    id = lastInsert.Id + 1;
+
+                var newEntity = new Campanha(command.Id, command.Status, command.UserInsId, command.UserInsData,
+                    command.UserModId, command.UserModData, command.MestreId, command.Nome, command.Descricao, command.Sinopse);
+
+                return newEntity;
+             }).ToList();
+
+            return true;
         }
     }
 }

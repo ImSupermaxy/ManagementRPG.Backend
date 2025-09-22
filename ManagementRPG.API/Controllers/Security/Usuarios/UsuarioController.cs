@@ -38,16 +38,16 @@ namespace ManagementRPG.API.Controllers.Security.Usuarios
         public async Task<IActionResult> Post(UsuarioCommandInsert command)
         {
             var result = await Sender.Send(command);
-            if (!result.Success)
+            if (!result.IsSuccess)
                 return BadRequest(result);
 
             var commandLogin = new UsuarioCommandLogin(command.Email, command.Senha, "");
             var resultLogin = await Sender.Send(command);
 
-            if (!resultLogin.Success)
+            if (!resultLogin.IsSuccess)
                 return Unauthorized(resultLogin);
 
-            return Ok(new { Token = result.Data });
+            return Ok();//new { Token = result.Value };
         }
 
         [HttpPut]

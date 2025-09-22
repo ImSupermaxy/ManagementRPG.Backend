@@ -19,12 +19,12 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
         {
         }
 
-        public async Task<CommandResult> Handle(UsuarioCommandInsert request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UsuarioCommandInsert request, CancellationToken cancellationToken)
         {
             return await HandleInsert(request);
         }
 
-        public async Task<CommandResult> Handle(UsuarioCommandUpdate request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(UsuarioCommandUpdate request, CancellationToken cancellationToken)
         {
             return await HandleUpdate(request);
         }

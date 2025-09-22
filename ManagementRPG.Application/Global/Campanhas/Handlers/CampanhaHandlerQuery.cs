@@ -16,12 +16,12 @@ namespace ManagementRPG.Application.Global.Campanhas.Handlers
         {
         }
 
-        public async Task<CommandResult<CampanhaQueryResult>> Handle(CampanhaCommandGetById request, CancellationToken cancellationToken)
+        public async Task<Result<CampanhaQueryResult>> Handle(CampanhaCommandGetById request, CancellationToken cancellationToken)
         {
             return await HandleGet(request.id);
         }
 
-        public async Task<CommandResult<IEnumerable<CampanhaQueryResult>>> Handle(CampanhaCommandGetAll request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<CampanhaQueryResult>>> Handle(CampanhaCommandGetAll request, CancellationToken cancellationToken)
         {
             return await HandleGetAll();
         }

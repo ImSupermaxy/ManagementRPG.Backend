@@ -1,12 +1,12 @@
 ﻿namespace ManagementRPG.Domain.Abstractions.Commands.Results
 {
-    public interface ICommandResult : ICommand
+    public interface IResult
     {
-        public bool Success { get; set; }
+        public bool IsSuccess { get; set; }
         public string Message { get; set; }
     }
 
-    public interface ICommandResult<T> : ICommandResult
+    public interface IResult<T> : IResult
     {
         public T Data { get; set; }
     }

@@ -11,8 +11,8 @@ namespace ManagementRPG.Domain.Abstractions.Handlers
         where TCommandUpdate : ICommandUpdate<TId>
     {
         
-        public Task<CommandResult> HandleInsert(TCommandInsert command);
-        public Task<CommandResult> HandleUpdate(TCommandUpdate command);
+        public Task<Result> HandleInsert(TCommandInsert command);
+        public Task<Result> HandleUpdate(TCommandUpdate command);
     }
 
     public interface IHandlerEntity<TId, TUId, TCommandInsert, TCommandUpdate>
@@ -25,8 +25,8 @@ namespace ManagementRPG.Domain.Abstractions.Handlers
     public interface IHandlerQuery<TCommandQuery, TId> : IHandler
         where TCommandQuery : IQueryResult<TId>
     {
-        public Task<CommandResult<IEnumerable<TCommandQuery>>> HandleGetAll();
-        public Task<CommandResult<TCommandQuery>> HandleGet(TId id);
+        public Task<Result<IEnumerable<TCommandQuery>>> HandleGetAll();
+        public Task<Result<TCommandQuery>> HandleGet(TId id);
     }
 
     public interface IHandlerQuery<TCommandQuery, TId, TUId> : IHandlerQuery<TCommandQuery, TId>

@@ -2,7 +2,7 @@
 
 namespace ManagementRPG.Application.Security.Usuarios.Commands
 {
-    public record UsuarioCommandLogin(string Email, string Senha, string? CodeAuth) : ICommandResponse
+    public record UsuarioCommandLogin(string Email, string Senha, string? CodeAuth) : ICommandResponse<object>
     {
     }
 }

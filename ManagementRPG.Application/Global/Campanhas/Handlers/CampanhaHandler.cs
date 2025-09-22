@@ -20,12 +20,12 @@ namespace ManagementRPG.Application.Global.Campanhas.Handlers
         {
         }
 
-        public async Task<CommandResult> Handle(CampanhaCommandInsert request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(CampanhaCommandInsert request, CancellationToken cancellationToken)
         {
             return await HandleInsert(request);
         }
 
-        public async Task<CommandResult> Handle(CampanhaCommandUpdate request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(CampanhaCommandUpdate request, CancellationToken cancellationToken)
         {
             return await HandleUpdate(request);
         }

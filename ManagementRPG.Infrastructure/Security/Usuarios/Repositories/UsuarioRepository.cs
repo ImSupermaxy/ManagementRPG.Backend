@@ -2,6 +2,7 @@
 using ManagementRPG.Domain.Abstractions.Context;
 using ManagementRPG.Domain.Abstractions.Repositories;
 using ManagementRPG.Domain.Security.Usuarios.Entities;
+using ManagementRPG.Domain.Security.Usuarios.Enums;
 using ManagementRPG.Domain.Security.Usuarios.Queries;
 using ManagementRPG.Domain.Security.Usuarios.Repositories;
 using System.Data;
@@ -51,6 +52,11 @@ namespace ManagementRPG.Infrastructure.Security.Usuarios.Repositories
         public async Task<int> Register(Usuario entity)
         {
             return await Insert(entity);
+        }
+
+        public Task<bool> InsertUpdatePerfis(EPerfil[] perfis)
+        {
+            throw new NotImplementedException();
         }
 
         protected override object GetInsertObject(Usuario entity)

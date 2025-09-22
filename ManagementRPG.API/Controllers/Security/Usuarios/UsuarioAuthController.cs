@@ -25,10 +25,10 @@ namespace ManagementRPG.API.Controllers.Security.Usuarios
             var command = new UsuarioCommandLogin(request.Email, request.Password, request.TwoFactorCode);
             var result = await Sender.Send(command);
 
-            if (!result.Success)
+            if (result.IsFailure)
                 return Unauthorized(result);
 
-            return Ok(new { Token = result.Data });
+            return Ok(new { Token = result.Value });
         }
 
         [HttpPost("register")]
@@ -36,10 +36,10 @@ namespace ManagementRPG.API.Controllers.Security.Usuarios
         {
             var result = await Sender.Send(request);
 
-            if (!result.Success)
+            if (result.IsFailure)
                 return BadRequest(result);
 
-            return Ok(new { Token = result.Data });
+            return Ok(new { Token = result.Value });
         }
 
         [HttpPatch("inactivate")]

@@ -3,11 +3,11 @@ using MediatR;
 
 namespace ManagementRPG.Domain.Abstractions.Commands
 {
-    public interface ICommandResponse : ICommand, IRequest<CommandResult>
+    public interface ICommandResponse : ICommand, IRequest<Result>
     {
     }
 
-    public interface ICommandResponse<T> : ICommand, IRequest<CommandResult<T>>
+    public interface ICommandResponse<T> : ICommand, IRequest<Result<T>>
     {
     }
 }

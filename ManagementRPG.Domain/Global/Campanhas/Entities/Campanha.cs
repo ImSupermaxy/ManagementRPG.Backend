@@ -1,6 +1,6 @@
 ﻿using ManagementRPG.Domain.Abstractions.Entities;
+using ManagementRPG.Domain.Global.Campanhas.Validators;
 using ManagementRPG.Domain.Shared.Enums;
-using ManagementRPG.Domain.Validators.Campanhas;
 
 namespace ManagementRPG.Domain.Global.Campanhas.Entities
 {

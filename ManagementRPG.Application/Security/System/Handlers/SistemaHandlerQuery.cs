@@ -17,12 +17,12 @@ namespace ManagementRPG.Application.Security.System.Handlers
         {
         }
 
-        public async Task<CommandResult<IEnumerable<SistemaQueryResult>>> Handle(SistemaCommandGetAll request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<SistemaQueryResult>>> Handle(SistemaCommandGetAll request, CancellationToken cancellationToken)
         {
             return await HandleGetAll();
         }
 
-        public async Task<CommandResult<SistemaQueryResult>> Handle(SistemaCommandGetById request, CancellationToken cancellationToken)
+        public async Task<Result<SistemaQueryResult>> Handle(SistemaCommandGetById request, CancellationToken cancellationToken)
         {
             return await HandleGet(request.id);
         }

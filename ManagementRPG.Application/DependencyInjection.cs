@@ -1,6 +1,4 @@
 ﻿using FluentValidation;
-using ManagementRPG.Application.Commands.Campanhas;
-using ManagementRPG.Domain.Commands.Campanhas;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ManagementRPG.Application

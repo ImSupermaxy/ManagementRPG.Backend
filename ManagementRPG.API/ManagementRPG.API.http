@@ -1,4 +1,4 @@
-@ManagementRPG.API_HostAddress = http://localhost:5114
+@ManagementRPG.API_HostAddress = http://localhost:44306
 
 GET {{ManagementRPG.API_HostAddress}}/weatherforecast/
 Accept: application/json
