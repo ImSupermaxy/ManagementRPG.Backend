@@ -4,6 +4,7 @@ using ManagementRPG.Domain.Abstractions.Handlers;
 using ManagementRPG.Domain.Abstractions.Repositories;
 using ManagementRPG.Domain.Security.System.Entities;
 using ManagementRPG.Domain.Security.System.Queries;
+using ManagementRPG.Domain.Security.System.Repositories;
 using ManagementRPG.Domain.Shared.Commands;
 
 namespace ManagementRPG.Application.Security.System.Handlers
@@ -12,7 +13,7 @@ namespace ManagementRPG.Application.Security.System.Handlers
         ICommandHandler<SistemaCommandGetAll, IEnumerable<SistemaQueryResult>>,
         ICommandHandler<SistemaCommandGetById, SistemaQueryResult>
     {
-        public SistemaHandlerQuery(IRepository<Sistema, int, int, SistemaQueryResult> repository) 
+        public SistemaHandlerQuery(ISistemaRepository repository) 
             : base(repository)
         {
         }

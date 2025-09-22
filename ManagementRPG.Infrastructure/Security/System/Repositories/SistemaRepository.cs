@@ -11,8 +11,8 @@ namespace ManagementRPG.Infrastructure.Security.System.Repositories
 {
     public class SistemaRepository : Repository<Sistema, int, int, SistemaQueryResult>, ISistemaRepository
     {
-        public SistemaRepository(IUnitOfWork uow, string numberTable, string customName = "001") 
-            : base(uow, numberTable, customName)
+        public SistemaRepository(IUnitOfWork uow) 
+            : base(uow, "001")
         {
         }
 
@@ -20,8 +20,6 @@ namespace ManagementRPG.Infrastructure.Security.System.Repositories
         {
             throw new NotImplementedException();
         }
-
-
 
         public async Task<EStatusSistema?> GetStatusSistema()
         {

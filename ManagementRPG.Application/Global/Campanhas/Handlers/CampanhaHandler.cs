@@ -9,7 +9,7 @@ using ManagementRPG.Domain.Global.Campanhas.Entities;
 
 namespace ManagementRPG.Application.Global.Campanhas.Handlers
 {
-    internal sealed class CampanhaHandler : HandlerEntity<Campanha, int, int, CampanhaCommandInsert, CampanhaCommandUpdate, CampanhaQueryResult>,
+    public sealed class CampanhaHandler : HandlerEntity<Campanha, int, int, CampanhaCommandInsert, CampanhaCommandUpdate, CampanhaQueryResult>,
         ICommandHandler<CampanhaCommandInsert>,
         ICommandHandler<CampanhaCommandUpdate>
         //,ICommandHandler<CampanhaCommandRemove>

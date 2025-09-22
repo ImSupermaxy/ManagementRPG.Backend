@@ -84,7 +84,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
                 //    return resultsistema;
 
                 //sender insert na tabela de usuário perfil
-                var resultPerfil = await Repository.InsertUpdatePerfis(entity.Perfis.ToArray());
+                var resultPerfil = await Repository.InsertUpdatePerfis(entity.Perfis.ToArray(), newId);
                 if (!resultPerfil)
                     return Result.Failure(UsuarioError.FailureRegistered);
 

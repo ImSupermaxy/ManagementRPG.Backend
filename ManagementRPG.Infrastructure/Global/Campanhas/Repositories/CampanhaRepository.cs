@@ -70,7 +70,7 @@ namespace ManagementRPG.Infrastructure.Global.Campanhas.Repositories
         public async Task<int> Insert(Campanha entity)
         {
             if (DataBase != null)
-                DataBase.Append(entity);
+                DataBase.Add(entity);
 
             AutoIncrementId();
 
@@ -132,13 +132,18 @@ namespace ManagementRPG.Infrastructure.Global.Campanhas.Repositories
                 UserModData = c.UserModData
             });
 
-            DataBase = listB.Select(command => {
+            DataBase = listB.OrderBy(d => d.UserInsData).Select(command => {
                 var id = 1;
-                var lastInsert = DataBase.LastOrDefault();
-                if (lastInsert != null)
-                    id = lastInsert.Id + 1;
+                if (command.Id != 0)
+                    id = command.Id;
+                else
+                {
+                    var lastWithId = DataBase.OrderBy(d => d.UserInsData).ToList().ElementAtOrDefault(DataBase.Count() - 2);
+                    if (lastWithId != null)
+                        id = lastWithId.Id + 1;
+                }
 
-                var newEntity = new Campanha(command.Id, command.Status, command.UserInsId, command.UserInsData,
+                var newEntity = new Campanha(id, command.Status, command.UserInsId, command.UserInsData,
                     command.UserModId, command.UserModData, command.MestreId, command.Nome, command.Descricao, command.Sinopse);
 
                 return newEntity;

@@ -11,6 +11,6 @@ namespace ManagementRPG.Domain.Security.Usuarios.Repositories
         Task<bool> UsuarioExist(Usuario entity);
         Task<int> Register(Usuario entity);
         Task<bool> Authenticate(UsuarioAuthLog entity);
-        Task<bool> InsertUpdatePerfis(EPerfil[] perfis);
+        Task<bool> InsertUpdatePerfis(EPerfil[] perfis, int usuarioId);
     }
 }

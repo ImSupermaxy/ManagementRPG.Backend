@@ -32,7 +32,7 @@ namespace ManagementRPG.API.Controllers.Security.System
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await Sender.Send(new SistemaCommandGetById(id));

@@ -1,9 +1,9 @@
 ﻿using ManagementRPG.Application.Global.Campanhas.Commands;
 using ManagementRPG.Domain.Abstractions.Commands.Handlers;
 using ManagementRPG.Domain.Abstractions.Handlers;
-using ManagementRPG.Domain.Abstractions.Repositories;
 using ManagementRPG.Domain.Global.Campanhas.Entities;
 using ManagementRPG.Domain.Global.Campanhas.Queries;
+using ManagementRPG.Domain.Global.Campanhas.Repositories;
 using ManagementRPG.Domain.Shared.Commands;
 
 namespace ManagementRPG.Application.Global.Campanhas.Handlers
@@ -12,7 +12,7 @@ namespace ManagementRPG.Application.Global.Campanhas.Handlers
         ICommandHandler<CampanhaCommandGetAll, IEnumerable<CampanhaQueryResult>>,
         ICommandHandler<CampanhaCommandGetById, CampanhaQueryResult>
     {
-        public CampanhaHandlerQuery(IRepository<Campanha, int, int, CampanhaQueryResult> repository) : base(repository)
+        public CampanhaHandlerQuery(ICampanhaRepository repository) : base(repository)
         {
         }
 

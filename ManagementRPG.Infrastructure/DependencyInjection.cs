@@ -1,8 +1,12 @@
 ﻿using Asp.Versioning;
 using ManagementRPG.Application.Abstractions.Clock;
 using ManagementRPG.Application.Global.Campanhas.Mappers;
+using ManagementRPG.Application.Security.System.Mappers;
+using ManagementRPG.Application.Security.Usuarios.Mappers;
 using ManagementRPG.Domain.Abstractions.Context;
 using ManagementRPG.Domain.Global.Campanhas.Repositories;
+using ManagementRPG.Domain.Security.System.Repositories;
+using ManagementRPG.Domain.Security.Usuarios.Repositories;
 using ManagementRPG.Domain.Shared.ApiConfig.Authentication;
 using ManagementRPG.Infrastructure.Authentication;
 using ManagementRPG.Infrastructure.Clock;
@@ -10,6 +14,8 @@ using ManagementRPG.Infrastructure.Context;
 using ManagementRPG.Infrastructure.Context.MySql;
 using ManagementRPG.Infrastructure.Global.Campanhas.Repositories;
 using ManagementRPG.Infrastructure.Providers;
+using ManagementRPG.Infrastructure.Security.System.Repositories;
+using ManagementRPG.Infrastructure.Security.Usuarios.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -54,7 +60,16 @@ namespace ManagementRPG.Infrastructure
             //services.AddDbContext<ExpensesMonitorContext>(options =>
             //    options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention());
 
-            //Entitys
+            //Security - Entitys
+            services.AddScoped<ISistemaRepository, SistemaRepository>();
+            //services.AddScoped<CampanhaHandler, CampanhaHandler>();
+            services.AddScoped<SistemaMapper, SistemaMapper>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            //services.AddScoped<CampanhaHandler, CampanhaHandler>();
+            services.AddScoped<UsuarioMapper, UsuarioMapper>();
+            services.AddScoped<UsuarioAuthLogMapper, UsuarioAuthLogMapper>();
+
+            //Global - Entitys
             services.AddScoped<ICampanhaRepository, CampanhaRepository>();
             //services.AddScoped<CampanhaHandler, CampanhaHandler>();
             services.AddScoped<CampanhaMapper, CampanhaMapper>();

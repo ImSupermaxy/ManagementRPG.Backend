@@ -36,8 +36,8 @@ namespace ManagementRPG.Domain.Abstractions.Handlers
                 if (!entity.IsValid)
                     return Result.Failure(EntityError<T, TId>.Invalid); //entity.Errors???
 
-                var newId = await Repository!.Insert(entity);
-                if (newId != IdentifierTypeManager<TId>.GetDefaultValue())
+                var newId = await Repository.Insert(entity);
+                if (newId == IdentifierTypeManager<TId>.GetDefaultValue())
                     return Result.Failure(EntityError<T, TId>.NotCreated); //entity.Errors???
 
                 return Result.Success(newId);

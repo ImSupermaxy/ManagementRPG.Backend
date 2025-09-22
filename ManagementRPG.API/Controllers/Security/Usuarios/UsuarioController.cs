@@ -28,7 +28,7 @@ namespace ManagementRPG.API.Controllers.Security.Usuarios
             throw new NotImplementedException();
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public Task<IActionResult> GetById(int id)
         {
             throw new NotImplementedException();

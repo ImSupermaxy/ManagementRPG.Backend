@@ -1,4 +1,5 @@
 ﻿using ManagementRPG.Application.Security.System.Commands;
+using ManagementRPG.Application.Security.System.Mappers;
 using ManagementRPG.Domain.Abstractions.Commands.Handlers;
 using ManagementRPG.Domain.Abstractions.Handlers;
 using ManagementRPG.Domain.Abstractions.Mappers;
@@ -10,12 +11,12 @@ using ManagementRPG.Domain.Shared.Commands;
 
 namespace ManagementRPG.Application.Security.System.Handlers
 {
-    internal class SistemaHandler : HandlerEntity<Sistema, int, int, SistemaCommandInsert, SistemaCommandUpdate, SistemaQueryResult>,
+    public class SistemaHandler : HandlerEntity<Sistema, int, int, SistemaCommandInsert, SistemaCommandUpdate, SistemaQueryResult>,
         ICommandHandler<SistemaCommandInsert>,
         ICommandHandler<SistemaCommandUpdate>
     {
-        protected SistemaHandler(ISistemaRepository repository,
-            IMapperEntity<Sistema, int, int, SistemaCommandInsert, SistemaCommandUpdate, SistemaQueryResult> mapper) 
+        public SistemaHandler(ISistemaRepository repository,
+            SistemaMapper mapper) 
             : base(repository, mapper)
         {
         }

@@ -12,6 +12,14 @@ namespace ManagementRPG.Domain.Security.System.Entities
         {
         }
 
+        public Sistema(int userId, string nome, string versao)
+            : base(userId)
+        {
+            Nome = nome;
+            Versao = versao;
+            Validate();
+        }
+
         public Sistema(int id, EStatus status, int userInsId, DateTime userInsData, int userModId, 
             string nome, string versao) 
             : base(id, status, userInsId, userInsData, userModId)
@@ -30,6 +38,7 @@ namespace ManagementRPG.Domain.Security.System.Entities
 
         protected override void Validate()
         {
+            //ALTERAR
             UpdateValid();
         }
     }

@@ -54,7 +54,7 @@ namespace ManagementRPG.Infrastructure.Security.Usuarios.Repositories
             return await Insert(entity);
         }
 
-        public Task<bool> InsertUpdatePerfis(EPerfil[] perfis)
+        public Task<bool> InsertUpdatePerfis(EPerfil[] perfis, int usuarioId)
         {
             throw new NotImplementedException();
         }
