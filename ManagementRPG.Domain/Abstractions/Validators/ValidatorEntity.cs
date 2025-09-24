@@ -17,8 +17,6 @@ namespace ManagementRPG.Domain.Abstractions.Validators
         public ValidatorEntity(T entity)
             : base(entity)
         {
-            RuleFor(e => e.Status).NotNull().NotEqual(EStatus.Todos).WithMessage($"{typeof(T).Name} Status deve possuir um valor válido");
-
             RuleFor(e => e.UserInsId).NotNull().NotEqual((TUId)default!).WithMessage($"{typeof(T).Name} inserção usuário deve possuir um valor válido");
             RuleFor(e => e.UserInsData).NotNull()
                 .NotEqual(DateTime.MinValue)
@@ -32,6 +30,15 @@ namespace ManagementRPG.Domain.Abstractions.Validators
                 .NotEqual(DateTime.MaxValue)
                 .InclusiveBetween(DateTime.Now.AddHours(-48), DateTime.Now.AddHours(24))
                 .WithMessage($"{typeof(T).Name} data atualização deve possuir um valor válido");
+        }
+    }
+
+    public abstract class ValidatorEntityDefault<T, TId, TUId> : ValidatorEntity<T, TId> where T : EntityDefault<TId, TUId>
+    {
+        public ValidatorEntityDefault(T entity)
+           : base(entity)
+        {
+            RuleFor(e => e.Status).NotNull().NotEqual(EStatus.Todos).WithMessage($"{typeof(T).Name} Status deve possuir um valor válido");
         }
     }
 }

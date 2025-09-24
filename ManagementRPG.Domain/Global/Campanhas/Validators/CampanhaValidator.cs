@@ -4,7 +4,7 @@ using ManagementRPG.Domain.Global.Campanhas.Entities;
 
 namespace ManagementRPG.Domain.Global.Campanhas.Validators
 {
-    public class CampanhaValidator : ValidatorEntity<Campanha, int, int>
+    public class CampanhaValidator : ValidatorEntityDefault<Campanha, int, int>
     {
         public CampanhaValidator(Campanha entity)
             : base(entity)

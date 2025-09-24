@@ -106,28 +106,37 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
 
         public async Task<Result<object>> Handle(UsuarioCommandLogin request, CancellationToken cancellationToken)
         {
-            var usuario = await Repository.GetByEmail(request.Email);
-            if (usuario is null)
-                return Result.Failure(UsuarioError.FailureLogin);
+            try
+            {
+                var usuario = await Repository.GetByEmail(request.Email);
+                if (usuario is null)
+                    return Result.Failure(UsuarioError.FailureLogin);
 
-            if (!SenhaHasher.VerificarSenha(request.Senha, usuario.SenhaHash))
-                return Result.Failure(UsuarioError.FailureLogin);
+                if (!SenhaHasher.VerificarSenha(request.Senha, usuario.SenhaHash))
+                    return Result.Failure(UsuarioError.FailureLogin);
 
-            var resultToken = await GerarJwt(request.Email, usuario.Id, usuario.Perfis);
-            return Result.Success(resultToken.Value);
+                var resultToken = await GerarJwt(request.Email, usuario.Id, usuario.Perfis);
+                return Result.Success(resultToken.Value);
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure(SystemError.GenericError, ex.Message);
+            }
         }
 
         public Task<Result> Handle(UsuarioCommandResetPassword request, CancellationToken cancellationToken)
         {
+            //Atualizar status do usuário para "Redefinir senha" -
+            //  Usuários com esse status não podem logar...
+
+            //TODO
+            //Criar Tabela para salvar os tokens de redefinição de senha
+            //Criptografar o codigo aqui e comparar com o código criptografado na tabela de TokenRedefinirSenha
             throw new NotImplementedException();
         }
 
         public async Task<Result> Handle(UsuarioCommandUpdatePassword request, CancellationToken cancellationToken)
         {
-            ////TODO
-            ////Criar Tabela para salvar os tokens de redefinição de senha
-            ////Criptografar o codigo aqui e comparar com o código criptografado na tabela de TokenRedefinirSenha
-            
             //var tokenChangePass = RepositoryToken.Get(request.SecurityCode);
             //if (tokenChangePass is null)
             //    return new CommandResult(false, "Tempo para redefinição de sneha expirou");

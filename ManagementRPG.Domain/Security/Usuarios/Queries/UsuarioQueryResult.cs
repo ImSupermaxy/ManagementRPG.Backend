@@ -7,7 +7,6 @@ namespace ManagementRPG.Domain.Security.Usuarios.Queries
     {
         public string SenhaHash { get; set; }
 
-        public EStatus Status { get; set; }
         public int UserInsId { get; set; }
         public DateTime UserInsData { get; set; }
         public int UserModId { get; set; }

@@ -12,16 +12,16 @@ namespace ManagementRPG.Domain.Security.System.Enums
         [Display(Name = "Todos")]
         Todos = -1,
 
+        [Display(Name = "Offline")]
+        Offline = 0,
+
         [Display(Name = "Online")]
-        Online = -1,
+        Online = 1,
 
         [Display(Name = "Manutenção")]
-        maintenance = -1,
-
-        [Display(Name = "Offline")]
-        Offline = -1,
+        maintenance = 2,
 
         [Display(Name = "Fechado")]
-        Closed = -1,
+        Closed = 3,
     }
 }

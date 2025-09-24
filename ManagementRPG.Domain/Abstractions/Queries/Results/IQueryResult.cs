@@ -9,10 +9,15 @@ namespace ManagementRPG.Domain.Abstractions.Queries.Results
 
     public interface IQueryResult<TId, TUId> : IQueryResult<TId>
     {
-        public EStatus Status { get; set; }
         public int UserInsId { get; set; }
         public DateTime UserInsData { get; set; }
         public int UserModId { get; set; }
         public DateTime UserModData { get; set; }
     }
+
+    public interface IQueryDefaultResult<TId, TUId> : IQueryResult<TId,TUId>
+    {
+        public EStatus Status { get; set; }
+    }
+
 }

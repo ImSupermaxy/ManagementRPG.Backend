@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using ManagementRPG.Domain.Abstractions.Validators;
 using ManagementRPG.Domain.Security.Usuarios.Entities;
+using ManagementRPG.Domain.Shared.Enums;
 
 namespace ManagementRPG.Domain.Security.Usuarios.Validators
 {
@@ -33,6 +34,8 @@ namespace ManagementRPG.Domain.Security.Usuarios.Validators
                 .Must(u => u.Split(' ').Select(x =>
                     x.Select(v => char.IsLetterOrDigit(v)).All(v => v == true)).All(v => v == true))
                 .WithMessage("Arroba do usuário inválido!");
+
+            RuleFor(e => e.Status).NotNull().NotEqual(Enums.EStatusUsuario.Todos).WithMessage($"Usuario Status deve possuir um valor válido");
         }
     }
 }
