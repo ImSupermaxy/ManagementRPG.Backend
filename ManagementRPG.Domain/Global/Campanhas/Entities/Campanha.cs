@@ -4,7 +4,7 @@ using ManagementRPG.Domain.Shared.Enums;
 
 namespace ManagementRPG.Domain.Global.Campanhas.Entities
 {
-    public class Campanha : Entity<int, int>
+    public class Campanha : EntityDefault<int, int>
     {
         public int MestreId { get; private set; }
         public string Nome { get; private set; }

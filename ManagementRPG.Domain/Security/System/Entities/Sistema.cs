@@ -3,7 +3,7 @@ using ManagementRPG.Domain.Shared.Enums;
 
 namespace ManagementRPG.Domain.Security.System.Entities
 {
-    public class Sistema : Entity<int, int>
+    public class Sistema : EntityDefault<int, int>
     {
         public string Nome { get; private set; }
         public string Versao { get; private set; }
