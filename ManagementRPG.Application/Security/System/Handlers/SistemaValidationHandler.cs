@@ -1,4 +1,5 @@
 ﻿using ManagementRPG.Application.Security.System.Commands;
+using ManagementRPG.Domain.Abstractions.Commands.Handlers;
 using ManagementRPG.Domain.Abstractions.Errors;
 using ManagementRPG.Domain.Abstractions.Handlers;
 using ManagementRPG.Domain.Security.System.Repositories;
@@ -7,7 +8,8 @@ using ManagementRPG.Domain.Shared.Commands;
 
 namespace ManagementRPG.Application.Security.System.Handlers
 {
-    internal class SistemaValidationHandler : IHandler
+    internal class SistemaValidationHandler : IHandler,
+        ICommandHandler<SistemaCommandGetValidation, int>
     {
         protected ISistemaRepository Repository { get; set; }
         //TODO: Fazer uma interface genêrica tipo o IAppSettings para obter das variaveis de ambiente o sistema atual
@@ -19,17 +21,24 @@ namespace ManagementRPG.Application.Security.System.Handlers
         {
         }
 
-        public async Task<Result> Handle(SistemaCommandGetValidation request, CancellationToken cancellationToken)
+        public async Task<Result<int>> Handle(SistemaCommandGetValidation request, CancellationToken cancellationToken)
         {
-            var sistema = await Repository.GetLastSistema();
+            try
+            {
+                var sistema = await Repository.GetLastSistema();
 
-            if (sistema != null)
-                return Result.Failure(SystemError.GenericError);
+                if (sistema != null)
+                    return Result.Failure<int>(SystemError.GenericError);
 
-            //if (SystemConfig.System != sistema)
-            //    return Result.Failure(SystemError.Deprecated);
-            
-            return Result.Success();
+                //if (SystemConfig.System != sistema)
+                //    return Result.Failure(SystemError.Deprecated);
+
+                return Result.Success(sistema!.Id);
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure<int>(SystemError.GenericError, ex.Message);
+            }
         }
     }
 }

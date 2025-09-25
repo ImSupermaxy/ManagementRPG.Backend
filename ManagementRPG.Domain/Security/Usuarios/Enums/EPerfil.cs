@@ -7,13 +7,13 @@ namespace ManagementRPG.Domain.Security.Usuarios.Enums
         [Display(Name = "Todos")]
         Todos = -1,
 
-        [Display(Name = "Master")]
-        MASTER = -1,
+        [Display(Name = "Usuário")]
+        USUARIO = 1,
 
         [Display(Name = "Administrador")]
-        ADMINISTRADOR = -1,
+        ADMINISTRADOR = 2,
 
-        [Display(Name = "Usuário")]
-        USUARIO = -1,
+        [Display(Name = "Master")]
+        MASTER = 3,        
     }
 }

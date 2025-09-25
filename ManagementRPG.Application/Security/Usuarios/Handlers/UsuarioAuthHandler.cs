@@ -2,6 +2,7 @@
 using ManagementRPG.Application.Security.Usuarios.Commands;
 using ManagementRPG.Application.Security.Usuarios.Errors;
 using ManagementRPG.Application.Security.Usuarios.Mappers;
+using ManagementRPG.Application.Security.Usuarios.Token;
 using ManagementRPG.Application.Utils;
 using ManagementRPG.Domain.Abstractions.Commands.Handlers;
 using ManagementRPG.Domain.Abstractions.Errors;
@@ -21,12 +22,12 @@ using System.Text;
 namespace ManagementRPG.Application.Security.Usuarios.Handlers
 {
     public class UsuarioAuthHandler : IHandler,
-        ICommandHandler<UsuarioCommandRegister, object>,
-        ICommandHandler<UsuarioCommandLogin, object>,
+        ICommandHandler<UsuarioCommandRegister, TokenModel>,
+        ICommandHandler<UsuarioCommandLogin, TokenModel>,
         ICommandHandler<UsuarioCommandResetPassword>,
         ICommandHandler<UsuarioCommandUpdatePassword>
     {
-        //public ISender Sender;
+        public ISender Sender;
         private IUsuarioRepository Repository;
         //private ISistemaRepository RepositorySistema;
         //private ITokenRepository RepositoryToken;
@@ -35,7 +36,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
         private IAppSettings Settings;
 
         public UsuarioAuthHandler(
-            //ISender sender,
+            ISender sender,
             IUsuarioRepository repository,
             //ISistemaRepository repositorySistema,
             /*, ITokenRepository repositoryToken*/
@@ -43,7 +44,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
             UsuarioAuthLogMapper mapperAuthLog, 
             IAppSettings settings)
         {
-            //Sender = sender;
+            Sender = sender;
             Repository = repository;
             //RepositorySistema = repositorySistema;
             Mapper = mapper;
@@ -52,41 +53,44 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
             //this.RepositoryToken = repositoryToken;
         }
 
-        public async Task<Result<object>> Handle(UsuarioCommandRegister request, CancellationToken cancellationToken)
+        public async Task<Result<TokenModel>> Handle(UsuarioCommandRegister request, CancellationToken cancellationToken)
         {
             try
             {
                 var entity = Mapper.GetEntity(request);
                 if (!entity.IsValid)
-                    return Result.Failure(UsuarioError.InvalidCredetials);
+                    return Result.Failure<TokenModel>(UsuarioError.InvalidCredetials);
 
-                if (await Repository.UsuarioExist(entity))
-                    return Result.Failure(UsuarioError.AlreadyExist);
+                //REMOVE this validation
+                if (await Repository.UsuarioExist(entity.Email))
+                    return Result.Failure<TokenModel>(UsuarioError.AlreadyExist);
+
+                //REMOVE this validation
+                if (await Repository.UsuarioExist(null, entity.Arroba))
+                    return Result.Failure<TokenModel>(UsuarioError.AlreadyExist);
 
                 var senhaHash = SenhaHasher.GerarHash(request.Password);
                 entity.UpdateSenha(senhaHash);
 
                 var newId = await Repository.Register(entity);
-                if (newId > 0)
-                    return Result.Failure(UsuarioError.NotRegistered);
+                if (!(newId > 0))
+                    return Result.Failure<TokenModel>(UsuarioError.NotRegistered);
 
                 var resultToken = await GerarJwt(request.Email, entity.Id, entity.Perfis);
                 if (resultToken.IsFailure)
                     return resultToken;
 
-                var roles = (resultToken.Value.UserToken.Claims as List<dynamic>)!.Select(c => c.Type == "roles") ?? default;
-                var token = resultToken.Value.AccessToken as string ?? default;
+                var roles = resultToken.Value.UserToken.Claims!.Select(c => c.Type == "roles") ?? default;
+                var token = resultToken.Value.AccessToken;
 
-                //var resultsistema = await Sender.Send(new SistemaCommandGetValidation());
-                //if (resultsistema == null)
-                //    return Result.Failure(SystemError.GenericError);
-                //if (resultsistema.IsFailure)
-                //    return resultsistema;
+                var resultsistema = await Sender.Send(new SistemaCommandGetValidation());
+                if (resultsistema.IsFailure)
+                    return Result.Failure<TokenModel>(resultsistema.Error);
 
                 //sender insert na tabela de usuário perfil
-                var resultPerfil = await Repository.InsertUpdatePerfis(entity.Perfis.ToArray(), newId);
+                var resultPerfil = await Repository.InsertUpdatePerfis(entity.Perfis.ToArray(), newId, resultsistema.Value);
                 if (!resultPerfil)
-                    return Result.Failure(UsuarioError.FailureRegistered);
+                    return Result.Failure<TokenModel>(UsuarioError.FailureRegistered);
 
                 var log = MapperAuthLog.GetAuthenticate(new UsuarioAuthLogCommandInsert()
                 {
@@ -100,18 +104,18 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
             }
             catch (Exception ex)
             {
-                return Result.Failure(SystemError.GenericError, ex.Message);
+                return Result.Failure<TokenModel>(SystemError.GenericError, ex.Message);
             }
         }
 
-        public async Task<Result<object>> Handle(UsuarioCommandLogin request, CancellationToken cancellationToken)
+        public async Task<Result<TokenModel>> Handle(UsuarioCommandLogin request, CancellationToken cancellationToken)
         {
             var usuario = await Repository.GetByEmail(request.Email);
             if (usuario is null)
-                return Result.Failure(UsuarioError.FailureLogin);
+                return Result.Failure<TokenModel>(UsuarioError.FailureLogin);
 
             if (!SenhaHasher.VerificarSenha(request.Senha, usuario.SenhaHash))
-                return Result.Failure(UsuarioError.FailureLogin);
+                return Result.Failure<TokenModel>(UsuarioError.FailureLogin);
 
             var resultToken = await GerarJwt(request.Email, usuario.Id, usuario.Perfis);
             return Result.Success(resultToken.Value);
@@ -148,7 +152,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
             return Result.Success();
         }
 
-        private async Task<Result<dynamic>> GerarJwt(string email, int id, IEnumerable<EPerfil> userRoles = null!)
+        private async Task<Result<TokenModel>> GerarJwt(string email, int id, IEnumerable<EPerfil> userRoles = null!)
         {
             var claims = new List<Claim> //todo: criar claims
             {
@@ -188,23 +192,23 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
                 var encodedToken = tokenHandler.WriteToken(token);
 
                 // Cria a resposta do token
-                var response = new
+                var response = new TokenModel
                 {
                     AccessToken = encodedToken,
                     ExpiresIn = TimeSpan.FromHours(Settings.ExpirationHours).TotalSeconds,
-                    UserToken = new
+                    UserToken = new UserTokenViewModel
                     {
                         Id = id.ToString(),
                         Email = email,
-                        Claims = claims.Select(c => new { c.Type, c.Value })
+                        Claims = claims.Select(c => new ClaimViewModel { Type = c.Type, Value = c.Value })
                     }
                 };
 
-                return Result.Success<dynamic>(response);
+                return Result.Success(response);
             }
             catch (Exception ex)
             {
-                return Result.Failure(UsuarioError.FailureAuthentication);
+                return Result.Failure<TokenModel>(UsuarioError.FailureAuthentication);
             }
         }
     }

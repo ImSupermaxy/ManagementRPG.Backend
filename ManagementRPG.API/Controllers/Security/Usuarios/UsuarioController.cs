@@ -3,7 +3,6 @@ using ManagementRPG.Application.Security.Usuarios.Commands;
 using ManagementRPG.Domain.Abstractions.Controllers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace ManagementRPG.API.Controllers.Security.Usuarios
 {
@@ -23,9 +22,14 @@ namespace ManagementRPG.API.Controllers.Security.Usuarios
         #region Endpoints for DEVs
 
         [HttpGet]
-        public Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            throw new NotImplementedException();
+            var result = await Sender.Send(new UsuarioCommandGetAll());
+
+            if (result.IsFailure)
+                return NotFound(result);
+
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
@@ -38,13 +42,13 @@ namespace ManagementRPG.API.Controllers.Security.Usuarios
         public async Task<IActionResult> Post(UsuarioCommandInsert command)
         {
             var result = await Sender.Send(command);
-            if (!result.IsSuccess)
+            if (result.IsFailure)
                 return BadRequest(result);
 
             var commandLogin = new UsuarioCommandLogin(command.Email, command.Senha, "");
             var resultLogin = await Sender.Send(command);
 
-            if (!resultLogin.IsSuccess)
+            if (resultLogin.IsFailure)
                 return Unauthorized(resultLogin);
 
             return Ok();//new { Token = result.Value };

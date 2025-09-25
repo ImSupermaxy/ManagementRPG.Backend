@@ -39,7 +39,6 @@ namespace ManagementRPG.Domain.Abstractions.Entities
 
     public abstract class Entity<TId, TUId> : Entity<TId>
     {
-        public EStatus Status { get; private set; }
         public TUId UserInsId { get; private set; }
         public DateTime UserInsData { get; private set; }
         public TUId UserModId { get; private set; }
@@ -51,29 +50,26 @@ namespace ManagementRPG.Domain.Abstractions.Entities
             CreateUserLog(userId);
         }
 
-        protected Entity(TId id, EStatus status, TUId userInsId, DateTime userInsData, TUId userModId, DateTime userModData)
+        protected Entity(TId id, TUId userInsId, DateTime userInsData, TUId userModId, DateTime userModData)
             : base(id)
         {
-            Status = status;
             UserInsId = userInsId;
             UserInsData = userInsData;
             UserModId = userModId;
             UserModData = userModData;
         }
 
-        protected Entity(TId id, EStatus status, TUId userInsId, DateTime userInsData, TUId userModId)
+        protected Entity(TId id, TUId userInsId, DateTime userInsData, TUId userModId)
           : base(id)
         {
-            Status = status;
             UserInsId = userInsId;
             UserInsData = userInsData;
             UpdateUserMod(userModId);
         }
 
-        protected void CreateUserLog(TUId userId)
+        protected virtual void CreateUserLog(TUId userId)
         {
             var now = DateTime.Now;
-            Status = EStatus.Ativo;
             UserInsId = userId;
             UserInsData = now;
             UserModId = userId;
@@ -84,6 +80,35 @@ namespace ManagementRPG.Domain.Abstractions.Entities
         {
             UserModId = userId;
             UserModData = DateTime.Now;
+        }
+    }
+
+    public abstract class EntityDefault<TId, TUId> : Entity<TId, TUId>
+    {
+        public EStatus Status { get; private set; }
+
+        protected EntityDefault(TUId userId)
+            : base(userId)
+        {
+            Status = EStatus.Ativo;
+        }
+
+        protected EntityDefault(TId id, EStatus status, TUId userInsId, DateTime userInsData, TUId userModId, DateTime userModData)
+            : base(id, userInsId, userInsData, userModId, userModData)
+        {
+            Status = status;
+        }
+
+        protected EntityDefault(TId id, EStatus status, TUId userInsId, DateTime userInsData, TUId userModId)
+          : base(id, userInsId, userInsData, userModId)
+        {
+            Status = status;
+        }
+
+        protected virtual void CreateUserLog(TUId userId)
+        {
+            Status = EStatus.Ativo;
+            base.CreateUserLog(userId);
         }
 
         public void InactivateEntity()

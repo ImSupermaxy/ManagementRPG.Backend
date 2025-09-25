@@ -49,7 +49,7 @@ namespace ManagementRPG.Domain.Shared.Commands
         [NotNull]
         public TValue Value => IsSuccess
             ? _value!
-            : throw new InvalidOperationException("The value of a failure result can not be accessed.");
+            : default!;
 
         public static implicit operator Result<TValue>(TValue? value) => Create(value);
     }

@@ -1,4 +1,5 @@
 ﻿using ManagementRPG.Domain.Abstractions.Queries.Results;
+using ManagementRPG.Domain.Security.Usuarios.Enums;
 using ManagementRPG.Domain.Shared.Enums;
 
 namespace ManagementRPG.Domain.Security.Usuarios.Queries
@@ -6,6 +7,7 @@ namespace ManagementRPG.Domain.Security.Usuarios.Queries
     public sealed class UsuarioQueryResult : UsuarioGeneral, IQueryResult<int, int>
     {
         public string SenhaHash { get; set; }
+        public List<EPerfil> Perfis { get; set; }
 
         public EStatus Status { get; set; }
         public int UserInsId { get; set; }
