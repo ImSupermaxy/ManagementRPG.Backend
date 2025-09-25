@@ -17,8 +17,8 @@ namespace ManagementRPG.Application.Security.System.Handlers
         //protected ISystemConfig SystemConfig { get; set; }
 
         public SistemaValidationHandler(ISistemaRepository repository/*, ISystemConfig SystemConfig*/)
-
         {
+            Repository = repository;
         }
 
         public async Task<Result<int>> Handle(SistemaCommandGetValidation request, CancellationToken cancellationToken)
@@ -27,7 +27,7 @@ namespace ManagementRPG.Application.Security.System.Handlers
             {
                 var sistema = await Repository.GetLastSistema();
 
-                if (sistema != null)
+                if (sistema == null)
                     return Result.Failure<int>(SystemError.GenericError);
 
                 //if (SystemConfig.System != sistema)

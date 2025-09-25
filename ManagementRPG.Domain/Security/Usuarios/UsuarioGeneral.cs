@@ -7,5 +7,6 @@ namespace ManagementRPG.Domain.Security.Usuarios
         public string Nome { get; set; }
         public string Email { get; set; }
         public string Arroba { get; set; }
+        public EStatusUsuario Status { get; set; }
     }
 }

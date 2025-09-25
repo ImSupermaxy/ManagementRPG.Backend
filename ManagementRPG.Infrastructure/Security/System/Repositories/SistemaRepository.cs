@@ -35,9 +35,19 @@ namespace ManagementRPG.Infrastructure.Security.System.Repositories
                                     commandType: CommandType.StoredProcedure) ?? default!;
         }
 
-        public Task<SistemaQueryResult> GetLastSistema()
+        public async Task<SistemaQueryResult> GetLastSistema()
         {
-            throw new NotImplementedException();
+            return new SistemaQueryResult()
+            {
+                Id = 1,
+                Nome = "ManagementRPG System",
+                Versao = "Alpha",
+                Status = EStatusSistema.Online,
+                UserInsId = 1,
+                UserInsData = DateTime.Now,
+                UserModId = 1,
+                UserModData = DateTime.Now,
+            };
         }
     }
 }
