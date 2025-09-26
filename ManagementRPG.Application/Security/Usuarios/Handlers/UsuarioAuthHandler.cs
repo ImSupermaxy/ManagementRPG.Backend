@@ -156,7 +156,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
         {
             var claims = new List<Claim> //todo: criar claims
             {
-                new Claim("CodigoUsuario", id.ToString()),
+                new Claim(TokenAuthConfig.UserIdentifier, id.ToString()),
             };
             userRoles = userRoles ?? new List<EPerfil> { EPerfil.USUARIO };
 
@@ -169,7 +169,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
 
             // Adiciona as roles como claims
             foreach (var userRole in userRoles)
-                claims.Add(new Claim("role", EnumHelper<EPerfil>.GetDisplayValue(userRole)));
+                claims.Add(new Claim(TokenAuthConfig.Role, EnumHelper<EPerfil>.GetDisplayValue(userRole)));
 
             // Cria a identidade de claims
             var identityClaims = new ClaimsIdentity();

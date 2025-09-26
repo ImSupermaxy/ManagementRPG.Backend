@@ -12,7 +12,20 @@ namespace ManagementRPG.Infrastructure.Security.Usuarios.Repositories
 {
     public class UsuarioRepository : Repository<Usuario, int, int, UsuarioQueryResult>, IUsuarioRepository
     {
-        private static IList<Usuario> DataBase = Enumerable.Empty<Usuario>().ToList();
+        private static UsuarioQueryResult MasterUser = new UsuarioQueryResult() 
+        {
+            Id = 1,
+            Nome = "Master",
+            Arroba = "Master",
+            Email = "master@teste.com",
+            SenhaHash = "$2a$11$qIbYy.HFXGqNGRPDxJ.44ehhc0qmpeGjBwuEl2jljhLdK50TMf/Q2",
+            Status = EStatusUsuario.Ativo,
+            UserInsData = DateTime.Now,
+            UserInsId = 1,
+            UserModData = DateTime.Now,
+            UserModId = 1,
+        };
+        private static IList<Usuario> DataBase = new List<Usuario>() { GetByQueryResultStatic(MasterUser) };
         private static IList<UsuarioAuthLog> DataBaseLog = Enumerable.Empty<UsuarioAuthLog>().ToList();
         private static IList<TmpSistemaUsuarioPerfil> DataBasePerfil = Enumerable.Empty<TmpSistemaUsuarioPerfil>().ToList();
         private static IList<Usuario> DataBaseToken = Enumerable.Empty<Usuario>().ToList();
@@ -249,6 +262,14 @@ namespace ManagementRPG.Infrastructure.Security.Usuarios.Repositories
         }
 
         private Usuario GetByQueryResult(UsuarioQueryResult query)
+        {
+            var newEntity = new Usuario(query.Id, query.Status, query.UserInsId, query.UserInsData,
+                    query.UserModId, query.UserModData, query.Nome, query.Email, query.Arroba);
+            newEntity.UpdateSenha(query.SenhaHash);
+            return newEntity;
+        }
+
+        private static Usuario GetByQueryResultStatic(UsuarioQueryResult query)
         {
             var newEntity = new Usuario(query.Id, query.Status, query.UserInsId, query.UserInsData,
                     query.UserModId, query.UserModData, query.Nome, query.Email, query.Arroba);

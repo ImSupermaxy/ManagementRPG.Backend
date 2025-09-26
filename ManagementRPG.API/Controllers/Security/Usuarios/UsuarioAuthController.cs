@@ -1,16 +1,17 @@
 ﻿using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ManagementRPG.Application.Security.Usuarios.Commands;
+using ManagementRPG.Domain.Abstractions.Controllers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ManagementRPG.API.Controllers.Security.Usuarios
 {
     [ApiController]
     [ApiVersion(ApiVersions.Version)]
     [Route("api/v{version:apiVersion}/auth")]
-    public class UsuarioAuthController : ControllerBase
+    public class UsuarioAuthController : ControllerBaseMRPG<int>
     {
         public ISender Sender { get; }
 
@@ -20,6 +21,7 @@ namespace ManagementRPG.API.Controllers.Security.Usuarios
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(LoginRequest request)
         {
             var command = new UsuarioCommandLogin(request.Email, request.Password, request.TwoFactorCode);
@@ -32,8 +34,10 @@ namespace ManagementRPG.API.Controllers.Security.Usuarios
         }
 
         [HttpPost("register")]
+        [Authorize]
         public async Task<IActionResult> Register(UsuarioCommandRegister request)
         {
+            //var id = GetUserId;
             var result = await Sender.Send(request);
 
             if (result.IsFailure)
