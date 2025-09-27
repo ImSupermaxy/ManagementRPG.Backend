@@ -26,7 +26,7 @@ namespace ManagementRPG.Domain.Abstractions.Repositories
                 throw new Exception("Número da tabela não é válido");
 
             _numberTable = numberTable;
-            _customName = customName ?? "";
+            _customName = customName ?? typeof(T).Name.ToLower();
         }
 
         public async Task<IEnumerable<TCommandQuery>> Get()

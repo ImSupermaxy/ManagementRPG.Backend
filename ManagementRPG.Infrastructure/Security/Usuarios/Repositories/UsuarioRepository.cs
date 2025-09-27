@@ -6,7 +6,6 @@ using ManagementRPG.Domain.Security.Usuarios.Enums;
 using ManagementRPG.Domain.Security.Usuarios.Queries;
 using ManagementRPG.Domain.Security.Usuarios.Repositories;
 using System.Data;
-using static Dapper.SqlMapper;
 
 namespace ManagementRPG.Infrastructure.Security.Usuarios.Repositories
 {

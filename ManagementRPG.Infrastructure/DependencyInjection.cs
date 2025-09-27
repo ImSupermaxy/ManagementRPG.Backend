@@ -11,7 +11,7 @@ using ManagementRPG.Domain.Shared.ApiConfig.Authentication;
 using ManagementRPG.Infrastructure.Authentication;
 using ManagementRPG.Infrastructure.Clock;
 using ManagementRPG.Infrastructure.Context;
-using ManagementRPG.Infrastructure.Context.MySql;
+using ManagementRPG.Infrastructure.Context.Postgres;
 using ManagementRPG.Infrastructure.Global.Campanhas.Repositories;
 using ManagementRPG.Infrastructure.Providers;
 using ManagementRPG.Infrastructure.Security.System.Repositories;
@@ -75,7 +75,7 @@ namespace ManagementRPG.Infrastructure
             services.AddScoped<CampanhaMapper, CampanhaMapper>();
 
             //Context
-            services.AddScoped<IDBContext>(sp => new DBContextMRPG(connectionString));
+            services.AddScoped<IDBContext>(sp => new DBContextPostgres(connectionString));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             //... 
