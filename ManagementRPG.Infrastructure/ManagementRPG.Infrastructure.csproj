@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <Folder Include="Context\Postgres\Global\Campanhas\" />
-    <Folder Include="Context\Postgres\Security\Usuarios\" />
   </ItemGroup>
 
 </Project>

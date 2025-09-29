@@ -12,4 +12,4 @@ BEGIN
 END;
 $$;
 
-SELECT * FROM sp001get(null, null, null);
+SELECT * FROM sp001get(1, null, null);

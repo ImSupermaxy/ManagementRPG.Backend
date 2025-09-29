@@ -14,13 +14,14 @@ namespace ManagementRPG.Application.Security.System.Mappers
 
         public Sistema GetEntity(SistemaQueryResult oldEntity, SistemaCommandUpdate command)
         {
-            //return new Sistema(command.Id, command.Status, command.UserInserId command.Nome, command.Versao);
-            throw new NotImplementedException();
+            return new Sistema(command.Id, command.Status, oldEntity.UserInsId, oldEntity.UserInsData, command.UserId, 
+                command.Nome, command.Versao);
         }
 
         public Sistema GetEntity(SistemaQueryResult command)
         {
-            throw new NotImplementedException();
+            return new Sistema(command.Id, command.Status, command.UserInsId, command.UserInsData, command.UserModId, command.UserModData,
+                command.Nome, command.Versao);
         }
     }
 }
