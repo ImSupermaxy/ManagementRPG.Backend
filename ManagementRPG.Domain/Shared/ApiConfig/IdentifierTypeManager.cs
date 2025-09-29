@@ -44,5 +44,21 @@
 
             return default!;
         }
+
+        public static TId ParseStringToTypeId(string id)
+        {
+            if (!IsValidTypeIdentifier())
+                return default!;
+
+            var tipo = typeof(TId);
+
+            if (tipo == intValue.GetType())
+                return (TId)(int.Parse(id) as object);
+
+            if (tipo == guidValue.GetType())
+                return (TId)(new Guid(id) as object);
+
+            return default!;
+        }
     }
 }

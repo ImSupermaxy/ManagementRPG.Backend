@@ -9,7 +9,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Mappers
     {
         public Usuario GetEntity(UsuarioCommandInsert command)
         {
-            return new Usuario(command.UserId, command.Nome, command.Senha, command.Arroba, command.Senha);
+            return new Usuario(command.UserId, command.Nome, command.Email, command.Arroba, command.Senha);
         }
 
         public Usuario GetEntity(UsuarioQueryResult oldEntity, UsuarioCommandUpdate command)

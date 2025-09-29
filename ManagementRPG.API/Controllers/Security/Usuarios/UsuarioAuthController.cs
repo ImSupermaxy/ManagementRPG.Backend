@@ -10,7 +10,7 @@ namespace ManagementRPG.API.Controllers.Security.Usuarios
 {
     [ApiController]
     [ApiVersion(ApiVersions.Version)]
-    [Route("api/v{version:apiVersion}/auth")]
+    [Route("api/v{version:apiVersion}/u/auth")]
     public class UsuarioAuthController : ControllerBaseMRPG<int>
     {
         public ISender Sender { get; }
@@ -34,7 +34,7 @@ namespace ManagementRPG.API.Controllers.Security.Usuarios
         }
 
         [HttpPost("register")]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<IActionResult> Register(UsuarioCommandRegister request)
         {
             //var id = GetUserId;
@@ -47,14 +47,18 @@ namespace ManagementRPG.API.Controllers.Security.Usuarios
         }
 
         [HttpPatch("inactivate")]
-        public Task<IActionResult> Delete(int id)
+        [Authorize]
+        public Task<IActionResult> Delete()
         {
+            var id = GetUserId;
             throw new NotImplementedException();
         }
 
         [HttpPatch("activate")]
-        public Task<IActionResult> Active(string email)
+        [Authorize]
+        public Task<IActionResult> Active()
         {
+            var email = GetUserEmail;
             throw new NotImplementedException();
         }
     }

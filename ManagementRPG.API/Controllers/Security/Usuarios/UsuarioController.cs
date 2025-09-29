@@ -2,6 +2,7 @@
 using ManagementRPG.Application.Security.Usuarios.Commands;
 using ManagementRPG.Domain.Abstractions.Controllers;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManagementRPG.API.Controllers.Security.Usuarios
@@ -9,8 +10,7 @@ namespace ManagementRPG.API.Controllers.Security.Usuarios
     [ApiController]
     [ApiVersion(ApiVersions.Version)]
     [Route("api/v{version:apiVersion}/usuario")]
-    //[Authorize(Roles = MasterONLY)]
-    public class UsuarioController : ControllerBase, IController<int, int, UsuarioCommandInsert, UsuarioCommandUpdate>
+    public class UsuarioController : ControllerBaseMRPG<int>, IController<int, int, UsuarioCommandInsert, UsuarioCommandUpdate>
     {
         public ISender Sender { get; }
 
@@ -39,8 +39,11 @@ namespace ManagementRPG.API.Controllers.Security.Usuarios
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Post(UsuarioCommandInsert command)
         {
+            command.UserId = GetUserId;
+
             var result = await Sender.Send(command);
             if (result.IsFailure)
                 return BadRequest(result);

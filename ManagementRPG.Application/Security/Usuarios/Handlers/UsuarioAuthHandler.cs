@@ -76,7 +76,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
                 if (!(newId > 0))
                     return Result.Failure<TokenModel>(UsuarioError.NotRegistered);
 
-                var resultToken = await GerarJwt(request.Email, entity.Id, entity.Perfis);
+                var resultToken = await GerarJwt(request.Email, entity.Id, entity.Nome, entity.Perfis);
                 if (resultToken.IsFailure)
                     return resultToken;
 
@@ -117,7 +117,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
             if (!SenhaHasher.VerificarSenha(request.Senha, usuario.SenhaHash))
                 return Result.Failure<TokenModel>(UsuarioError.FailureLogin);
 
-            var resultToken = await GerarJwt(request.Email, usuario.Id, usuario.Perfis);
+            var resultToken = await GerarJwt(request.Email, usuario.Id, usuario.Nome, usuario.Perfis);
             return Result.Success(resultToken.Value);
         }
 
@@ -152,7 +152,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
             return Result.Success();
         }
 
-        private async Task<Result<TokenModel>> GerarJwt(string email, int id, IEnumerable<EPerfil> userRoles = null!)
+        private async Task<Result<TokenModel>> GerarJwt(string email, int id, string name, IEnumerable<EPerfil> userRoles = null!)
         {
             var claims = new List<Claim> //todo: criar claims
             {
@@ -161,7 +161,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
             userRoles = userRoles ?? new List<EPerfil> { EPerfil.USUARIO };
 
             // Adiciona as claims padrão do JWT
-            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, id.ToString()));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Name, name.ToString()));
             claims.Add(new Claim(JwtRegisteredClaimNames.Email, email));
             claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
             claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, DateTime.UtcNow.ToString()));

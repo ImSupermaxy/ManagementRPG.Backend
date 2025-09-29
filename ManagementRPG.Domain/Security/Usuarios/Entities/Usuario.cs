@@ -21,6 +21,7 @@ namespace ManagementRPG.Domain.Security.Usuarios.Entities
             Email = email;
             Arroba = arroba;
             Senha = senha;
+            Status = EStatusUsuario.Ativo;
             Perfis = new List<EPerfil>() { EPerfil.USUARIO };
             Validate();
         }

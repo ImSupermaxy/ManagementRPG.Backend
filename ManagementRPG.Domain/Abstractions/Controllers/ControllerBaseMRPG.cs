@@ -20,7 +20,9 @@ namespace ManagementRPG.Domain.Abstractions.Controllers
         {
             get
             {
-                var id = ConvertStringToTId(User.Claims.FirstOrDefault(c => c.Type == TokenAuthConfig.UserIdentifier)!.Value);
+                var id = IdentifierTypeManager<TId>.ParseStringToTypeId(
+                    User.Claims.FirstOrDefault(c => c.Type == TokenAuthConfig.UserIdentifier)!.Value
+                );
                 return id;
             }
         }
@@ -29,7 +31,7 @@ namespace ManagementRPG.Domain.Abstractions.Controllers
         {
             get
             {
-                return User.Claims.Where(c => c.Type == ClaimTypes.Name).Select(s => s.Value).FirstOrDefault();
+                return User.Claims.Where(c => c.Type == ClaimTypes.Name).Select(s => s.Value).FirstOrDefault() ?? default!;
             }
         }
 
@@ -37,7 +39,7 @@ namespace ManagementRPG.Domain.Abstractions.Controllers
         {
             get
             {
-                return User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(s => s.Value).FirstOrDefault();
+                return User.Claims.Where(c => c.Type == ClaimTypes.Email).Select(s => s.Value).FirstOrDefault() ?? default!;
             }
         }
 
@@ -45,16 +47,8 @@ namespace ManagementRPG.Domain.Abstractions.Controllers
         {
             get
             {
-                return User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(s => s.Value);
+                return User.Claims.Where(c => c.Type == TokenAuthConfig.Role).Select(s => s.Value);
             }
-        }
-
-        private TId ConvertStringToTId(string id)
-        {
-            var result = IdentifierTypeManager<TId>.IsValidTypeIdentifier();
-            if (!result)
-                throw new Exception("Type of identity is invalid");
-            return (TId)(id as object);
         }
     }
 }
