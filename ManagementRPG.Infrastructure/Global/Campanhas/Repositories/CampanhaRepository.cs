@@ -17,7 +17,7 @@ namespace ManagementRPG.Infrastructure.Global.Campanhas.Repositories
         {
         }
 
-        public async Task<IEnumerable<CampanhaQueryResult>> Get()
+        public async Task<IEnumerable<CampanhaQueryResult>> GetAll()
         {
             if (DataBase == null)
                 return default!;
@@ -150,6 +150,16 @@ namespace ManagementRPG.Infrastructure.Global.Campanhas.Repositories
              }).ToList();
 
             return true;
+        }
+
+        protected override object GetInsertObject(Campanha entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override object GetUpdateObject(Campanha entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

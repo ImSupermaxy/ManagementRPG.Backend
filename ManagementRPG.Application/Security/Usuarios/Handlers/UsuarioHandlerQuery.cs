@@ -22,7 +22,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
         {
             try
             {
-                var result = await Repository.Get();
+                var result = await Repository.GetAll();
                 return Result.Success(result);
             }
             catch (Exception ex)

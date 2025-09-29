@@ -3,22 +3,21 @@ using ManagementRPG.Domain.Abstractions.Context;
 using ManagementRPG.Domain.Abstractions.Entities;
 using ManagementRPG.Domain.Abstractions.Queries.Results;
 using System.Data;
+using System.Linq;
 
 namespace ManagementRPG.Domain.Abstractions.Repositories
 {
-    public class Repository<T, TId, TCommandQuery> : IRepository<T, TId, TCommandQuery>
+    public abstract class Repository<T, TId, TCommandQuery> : IRepository<T, TId, TCommandQuery>
         where T : Entity<TId>
         where TCommandQuery : IQueryResult<TId>
     {
         protected readonly IUnitOfWork Uow;
         private string _numberTable = "";
-        private string _customName = "";
 
-        public Repository(IUnitOfWork uow, string numberTable, string customName = "")
+        public Repository(IUnitOfWork uow, string numberTable)
         {
             Uow = uow;
 
-            //throw new CustomException();
             if (string.IsNullOrEmpty(numberTable))
                 throw new Exception("Número da tabela não é válido");
 
@@ -26,98 +25,126 @@ namespace ManagementRPG.Domain.Abstractions.Repositories
                 throw new Exception("Número da tabela não é válido");
 
             _numberTable = numberTable;
-            _customName = customName ?? typeof(T).Name.ToLower();
         }
 
-        public async Task<IEnumerable<TCommandQuery>> Get()
+        public async Task<IEnumerable<TCommandQuery>> GetAll()
         {
-            var param = new DynamicParameters();
-
-            //param.Add("chave", base.keyCryptDecrypt);
-
-            return await Uow.Context.Connection
-                                .QueryAsync<TCommandQuery>($"{GetProcEntityName()}Get",
-                                    param,
-                                    commandType: CommandType.StoredProcedure);
+            return await Uow.Context.Connection.QueryAsync<TCommandQuery>(
+                $"SELECT * FROM {GetProcEntityName()}getAll()",
+                commandType: CommandType.Text
+            );
         }
 
         public async Task<TCommandQuery> GetById(TId id)
         {
-            var param = new DynamicParameters();
-
-            //param.Add("chave", base.keyCryptDecrypt);
-            param.Add("id", id);
-
-            return (await Uow.Context.Connection
-                                .QueryFirstOrDefaultAsync<TCommandQuery>($"{GetProcEntityName()}Get",
-                                    param,
-                                    commandType: CommandType.StoredProcedure))!;
+            return await Uow.Context.Connection.QueryFirstOrDefaultAsync<TCommandQuery>(
+                $"SELECT * FROM {GetProcEntityName()}GetById(@p_id)",
+                new { p_id = id},
+                commandType: CommandType.Text
+            ) ?? default!;
         }
 
-        //public Task<TCommandQuery> GetByProperty<TProp>(TProp prop, string name)
-        //{
-        //    //Elaborate better how implemente this...
-        //    throw new NotImplementedException();
-        //}
+        public async Task<TCommandQuery> GetByPropertys(List<Tuple<object, string>> props, string customName = default!)
+        {
+            return await GetByPropertys<TCommandQuery>(props, customName);
+        }
 
-        //public Task<IEnumerable<TCommandQuery>> GetAllByProperty<TProp>(TProp prop, string name)
-        //{
-        //    //Elaborate better how implemente this...
-        //    throw new NotImplementedException();
-        //}
+        public async Task<IEnumerable<TCommandQuery>> GetAllByPropertys(List<Tuple<object, string>> props, string customName = default!)
+        {
+            return await GetAllByPropertys<TCommandQuery>(props, customName);
+        }
+
+        public async Task<TResult> GetByPropertys<TResult>(List<Tuple<object, string>> props, string customName = default!)
+            where TResult : IQueryResult<TId>
+        {
+            var paramsString = "";
+            var param = new DynamicParameters();
+
+            foreach (var prop in props)
+            {
+                param.Add("p_" + prop.Item2.ToLower(), prop.Item1);
+            }
+
+            paramsString = string.Join(',', props.Select(p => "@p_" + p.Item2.ToLower()));
+
+            return await Uow.Context.Connection.QueryFirstOrDefaultAsync<TResult>(
+                $"SELECT * FROM {GetProcEntityName(customName)}get({paramsString})",
+                param,
+                commandType: CommandType.Text
+            ) ?? default!;
+        }
+
+        public async Task<IEnumerable<TResult>> GetAllByPropertys<TResult>(List<Tuple<object, string>> props, string customName = default!)
+            where TResult : IQueryResult<TId>
+        {
+            var paramsString = "";
+            var param = new DynamicParameters();
+
+            foreach (var prop in props)
+            {
+                param.Add("p_" + prop.Item2.ToLower(), prop.Item1);
+            }
+
+            paramsString = string.Join(',', props.Select(p => "@p_" + p.Item2.ToLower()));
+
+            return await Uow.Context.Connection.QueryAsync<TResult>(
+                $"SELECT * FROM {GetProcEntityName(customName)}get({paramsString})",
+                param,
+                commandType: CommandType.Text
+            ) ?? default!;
+        }
 
         public async Task<TId> Insert(T entity)
         {
-            return await Uow.Context.Connection
-                                .QueryFirstAsync<TId>($"{GetProcEntityName()}Insert",
-                                    GetInsertObject(entity),
-                                    transaction: Uow.Transaction,
-                                    commandType: CommandType.StoredProcedure) ?? default!;
+            var props = typeof(T).GetProperties().Select(p => "@p_" + p.Name.ToLower()).Except(["@p_id", "@p_isvalid", "@p_errors"]);
+
+            return await Uow.Context.Connection.ExecuteScalarAsync<TId>(
+                $"SELECT {GetProcEntityName()}insert({string.Join(',', props)})", 
+                GetInsertObject(entity), 
+                transaction: Uow.Transaction
+            ) ?? default!;
         }
 
         public async Task<bool> Update(T entity)
         {
-            var rows = await Uow.Context.Connection
-                                .QueryFirstAsync<int>($"{GetProcEntityName()}Update",
-                                    GetInsertObject(entity),
-                                    transaction: Uow.Transaction,
-                                    commandType: CommandType.StoredProcedure);
+            var props = typeof(T).GetProperties().Select(p => "@p_" + p.Name.ToLower()).Except(["@p_isvalid", "@errors"]);
+
+            var rows = await Uow.Context.Connection.ExecuteScalarAsync<int>(
+                $"SELECT {GetProcEntityName()}update({string.Join(',', props)})", 
+                GetUpdateObject(entity), 
+                transaction: Uow.Transaction
+            );
+
             return rows == 1;
         }
 
-        protected string GetProcEntityName()
+        protected string GetProcEntityName(string customName = default!)
         {
-            return $"sp{_customName}{_numberTable}";
+            return $"sp{customName}{_numberTable}";
         }
 
-        protected virtual object GetInsertObject(T entity)
-        {
-            throw new NotImplementedException();
-        }
+        protected abstract object GetInsertObject(T entity);
 
-        protected virtual object GetUpdateObject(T entity)
-        {
-            throw new NotImplementedException();
-        }
+        protected abstract object GetUpdateObject(T entity);
     }
 
-    public class Repository<T, TId, TUId, TCommandQuery> : Repository<T, TId, TCommandQuery>,
+    public abstract class Repository<T, TId, TUId, TCommandQuery> : Repository<T, TId, TCommandQuery>,
             IRepository<T, TId, TUId, TCommandQuery>
         where T : Entity<TId, TUId>
         where TCommandQuery : IQueryResult<TId, TUId>
     {
-        public Repository(IUnitOfWork uow, string numberTable, string customName = "") 
-            : base(uow, numberTable, customName)
+        public Repository(IUnitOfWork uow, string numberTable) 
+            : base(uow, numberTable)
         {
         }
 
         public async Task<bool> Delete(T entity)
         {
-            var rows = await Uow.Context.Connection
-                    .QueryFirstAsync<int>($"{GetProcEntityName()}Update",
-                        GetInsertObject(entity),
-                        transaction: Uow.Transaction,
-                        commandType: CommandType.StoredProcedure);
+            var rows = await Uow.Context.Connection.ExecuteScalarAsync<int>(
+                $"SELECT {GetProcEntityName()}delete(@p_id)",
+                new { p_id = entity.Id },
+                transaction: Uow.Transaction
+            );
 
             return rows == 1;
         }

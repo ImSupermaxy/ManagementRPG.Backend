@@ -11,6 +11,7 @@ namespace ManagementRPG.Infrastructure.Security.Usuarios.Repositories
 {
     public class UsuarioRepository : Repository<Usuario, int, int, UsuarioQueryResult>, IUsuarioRepository
     {
+        private static bool UseDatabaseInMemoria = false;
         private static UsuarioQueryResult MasterUser = new UsuarioQueryResult() 
         {
             Id = 1,
@@ -33,7 +34,7 @@ namespace ManagementRPG.Infrastructure.Security.Usuarios.Repositories
             : base(uow, "002")
         {
         }
-        public async Task<IEnumerable<UsuarioQueryResult>> Get()
+        public async Task<IEnumerable<UsuarioQueryResult>> GetAll()
         {
             if (DataBase == null)
                 return default!;

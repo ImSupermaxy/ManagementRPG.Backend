@@ -1,33 +1,25 @@
-select * from tbl_002_usuario;
-
-select * from tbl_001_sistema;
-
--- select * from tbl_001_sistema t001 inner join tbl_002_usuario t002 on t002.id = t001.userinsid;
-
-
--- PROCEDURES Para Insert / Update / Delete / Patch / TUDO menos get..
-CREATE OR REPLACE PROCEDURE inserir_cliente(p_nome VARCHAR, p_email VARCHAR)
+CREATE OR REPLACE function sp001insert(
+	p_nome TEXT, 
+	p_versao TEXT, 
+	p_status INT,
+	p_userinsid INT, 
+	p_usermodid INT, 
+	p_userinsdata TIMESTAMP, 
+	p_usermoddata TIMESTAMP
+)
+RETURNS INT
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    novo_id INT;
 BEGIN
-    INSERT INTO clientes (nome, email) VALUES (p_nome, p_email);
+    INSERT INTO tbl_001_sistema (nome, versao, status, userinsid, usermodid, userinsdata, usermoddata) 
+	VALUES (p_nome, p_versao, p_status, p_userinsid, p_usermodid, p_userinsdata, p_usermoddata)
+
+	RETURNING id INTO novo_id;
+
+    RETURN novo_id;
 END;
 $$;
-
-call spteste();
-
--- FUNCTIONS Para Get
-CREATE OR REPLACE FUNCTION buscar_clientes(p_nome VARCHAR)
-RETURNS TABLE(id INT, nome VARCHAR, email VARCHAR)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    RETURN QUERY
-    SELECT id, nome, email
-    FROM clientes
-    WHERE nome ILIKE '%' || p_nome || '%';
-END;
-$$;
-
 
 

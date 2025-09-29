@@ -11,7 +11,7 @@ namespace ManagementRPG.Domain.Abstractions.Handlers
         where TCommandUpdate : ICommandUpdate<TId>
     {
         
-        public Task<Result> HandleInsert(TCommandInsert command);
+        public Task<Result<TId>> HandleInsert(TCommandInsert command);
         public Task<Result> HandleUpdate(TCommandUpdate command);
     }
 

@@ -27,24 +27,24 @@ namespace ManagementRPG.Domain.Abstractions.Handlers
             Mapper = mapper;
         }
 
-        public virtual async Task<Result> HandleInsert(TCommandInsert command)
+        public virtual async Task<Result<TId>> HandleInsert(TCommandInsert command)
         {
             try
             {
                 var entity = Mapper.GetEntity(command);
 
                 if (!entity.IsValid)
-                    return Result.Failure(EntityError<T, TId>.Invalid); //entity.Errors???
+                    return Result.Failure<TId>(EntityError<T, TId>.Invalid); //entity.Errors???
 
                 var newId = await Repository.Insert(entity);
                 if (newId == IdentifierTypeManager<TId>.GetDefaultValue())
-                    return Result.Failure(EntityError<T, TId>.NotCreated); //entity.Errors???
+                    return Result.Failure<TId>(EntityError<T, TId>.NotCreated); //entity.Errors???
 
                 return Result.Success(newId);
             }
             catch (Exception ex)
             {
-                return Result.Failure(EntityError<T, TId>.NotCreated, ex.Message);
+                return Result.Failure<TId>(EntityError<T, TId>.NotCreated, ex.Message);
             }
         }
 
@@ -103,7 +103,7 @@ namespace ManagementRPG.Domain.Abstractions.Handlers
         {
             try
             {
-                var result = await Repository.Get();
+                var result = await Repository.GetAll();
                 if (result == null)
                     return Result.Failure<IEnumerable<TCommandQuery>>(EntityError<T, TId>.NotFound);
 

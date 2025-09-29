@@ -1,6 +1,6 @@
 ﻿namespace ManagementRPG.Domain.Abstractions.Commands.Inserts
 {
-    public interface ICommandInsert : ICommandResponse
+    public interface ICommandInsert : ICommand
     {
     }
 

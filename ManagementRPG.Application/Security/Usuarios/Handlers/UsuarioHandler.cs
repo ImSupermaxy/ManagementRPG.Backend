@@ -12,7 +12,7 @@ using ManagementRPG.Domain.Shared.Commands;
 namespace ManagementRPG.Application.Security.Usuarios.Handlers
 {
     public class UsuarioHandler : HandlerEntity<Usuario, int, int, UsuarioCommandInsert, UsuarioCommandUpdate, UsuarioQueryResult>,
-        ICommandHandler<UsuarioCommandInsert>,
+        ICommandHandler<UsuarioCommandInsert, int>,
         ICommandHandler<UsuarioCommandUpdate>
     {
         public UsuarioHandler(IUsuarioRepository repository, 
@@ -21,7 +21,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
         {
         }
 
-        public async Task<Result> Handle(UsuarioCommandInsert request, CancellationToken cancellationToken)
+        public async Task<Result<int>> Handle(UsuarioCommandInsert request, CancellationToken cancellationToken)
         {
             return await HandleInsert(request);
         }

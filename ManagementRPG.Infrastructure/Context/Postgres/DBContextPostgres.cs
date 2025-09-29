@@ -12,6 +12,7 @@ namespace ManagementRPG.Infrastructure.Context.Postgres
         public DBContextPostgres(string connectionString)
         {
             ConnectionString = connectionString;
+            CreateConnection();
         }
 
         public IDbConnection CreateConnection()

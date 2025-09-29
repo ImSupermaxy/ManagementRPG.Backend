@@ -7,12 +7,12 @@ namespace ManagementRPG.Domain.Abstractions.Repositories
         where T : Entity<TId>
         where TCommandQuery : IQueryResult<TId>
     {
-        Task<IEnumerable<TCommandQuery>> Get();
+        Task<IEnumerable<TCommandQuery>> GetAll();
         Task<TCommandQuery> GetById(TId id);
-
-        //Task<TCommandQuery> GetByProperty<TProp>(TProp prop, string name);
-        //Task<IEnumerable<TCommandQuery>> GetAllByProperty<TProp>(TProp prop, string name);
-
+        Task<TResult> GetByPropertys<TResult>(List<Tuple<object, string>> props, string customName = default!)
+            where TResult : IQueryResult<TId>;
+        Task<IEnumerable<TResult>> GetAllByPropertys<TResult>(List<Tuple<object, string>> props, string customName = default!)
+            where TResult : IQueryResult<TId>;
         Task<TId> Insert(T entity);
         Task<bool> Update(T entity);
     }

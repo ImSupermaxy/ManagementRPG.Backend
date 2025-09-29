@@ -10,7 +10,7 @@ using ManagementRPG.Domain.Global.Campanhas.Entities;
 namespace ManagementRPG.Application.Global.Campanhas.Handlers
 {
     public sealed class CampanhaHandler : HandlerEntity<Campanha, int, int, CampanhaCommandInsert, CampanhaCommandUpdate, CampanhaQueryResult>,
-        ICommandHandler<CampanhaCommandInsert>,
+        ICommandHandler<CampanhaCommandInsert, int>,
         ICommandHandler<CampanhaCommandUpdate>
         //,ICommandHandler<CampanhaCommandRemove>
     {
@@ -20,7 +20,7 @@ namespace ManagementRPG.Application.Global.Campanhas.Handlers
         {
         }
 
-        public async Task<Result> Handle(CampanhaCommandInsert request, CancellationToken cancellationToken)
+        public async Task<Result<int>> Handle(CampanhaCommandInsert request, CancellationToken cancellationToken)
         {
             return await HandleInsert(request);
         }

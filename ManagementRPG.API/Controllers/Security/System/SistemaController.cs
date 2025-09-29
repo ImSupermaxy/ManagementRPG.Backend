@@ -48,10 +48,10 @@ namespace ManagementRPG.API.Controllers.Security.System
         {
             var result = await Sender.Send(command);
 
-            if (!result.IsSuccess)
+            if (result.IsFailure)
                 return BadRequest(result);
 
-            return Created();
+            return Created(string.Empty, result.Value);
         }
 
         [HttpPut]

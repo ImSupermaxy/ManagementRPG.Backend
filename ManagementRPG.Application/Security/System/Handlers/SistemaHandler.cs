@@ -12,7 +12,7 @@ using ManagementRPG.Domain.Shared.Commands;
 namespace ManagementRPG.Application.Security.System.Handlers
 {
     public class SistemaHandler : HandlerEntity<Sistema, int, int, SistemaCommandInsert, SistemaCommandUpdate, SistemaQueryResult>,
-        ICommandHandler<SistemaCommandInsert>,
+        ICommandHandler<SistemaCommandInsert, int>,
         ICommandHandler<SistemaCommandUpdate>
     {
         public SistemaHandler(ISistemaRepository repository,
@@ -21,7 +21,7 @@ namespace ManagementRPG.Application.Security.System.Handlers
         {
         }
 
-        public async Task<Result> Handle(SistemaCommandInsert request, CancellationToken cancellationToken)
+        public async Task<Result<int>> Handle(SistemaCommandInsert request, CancellationToken cancellationToken)
         {
             return await HandleInsert(request);
         }

@@ -12,22 +12,22 @@ namespace ManagementRPG.Domain.Abstractions.Errors
     {
         public static readonly Error NotFound = new(
             "Notification.EntityNotFound",
-            $"Entity {typeof(T).Name} Not Found.");
+            $"Entity(s) {typeof(T).Name} Not Found.");
 
         public static readonly Error NotCreated = new(
             "Notification.EntityNotCreated",
-            $"Entity {typeof(T).Name} was Not Created.");
+            $"Entity(s) {typeof(T).Name} was Not Created.");
 
         public static readonly Error NotUpdated = new(
             "Notification.EntityNotUpdated",
-            $"Entity {typeof(T).Name} was Not Updated");
+            $"Entity(s) {typeof(T).Name} was Not Updated");
 
         public static readonly Error NotDeleted = new(
             "Notification.EntityNotDeleted",
-            $"Entity {typeof(T).Name} was Not Deleted");
+            $"Entity(s) {typeof(T).Name} was Not Deleted");
 
         public static readonly Error Invalid = new(
             "Notification.EntityNotValid",
-            $"Entity {typeof(T).Name} is Not Valid");
+            $"Entity(s) {typeof(T).Name} is Not Valid");
     }
 }

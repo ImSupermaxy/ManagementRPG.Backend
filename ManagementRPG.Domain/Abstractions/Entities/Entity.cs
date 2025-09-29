@@ -40,8 +40,8 @@ namespace ManagementRPG.Domain.Abstractions.Entities
     public abstract class Entity<TId, TUId> : Entity<TId>
     {
         public TUId UserInsId { get; private set; }
-        public DateTime UserInsData { get; private set; }
         public TUId UserModId { get; private set; }
+        public DateTime UserInsData { get; private set; }
         public DateTime UserModData { get; private set; }
 
         protected Entity(TUId userId)
