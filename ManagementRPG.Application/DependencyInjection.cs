@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace ManagementRPG.Application
 {
@@ -9,20 +8,8 @@ namespace ManagementRPG.Application
         {
             services.AddMediatR(configuration =>
             {
-                //configuration.RegisterServicesFromAssembly(typeof(CampanhaCommandGetAll).Assembly);
-                //configuration.RegisterServicesFromAssembly(typeof(CampanhaCommandGetById).Assembly);
-                //configuration.RegisterServicesFromAssembly(typeof(CampanhaCommandRemove).Assembly);
-                //configuration.RegisterServicesFromAssembly(typeof(CampanhaCommandInsert).Assembly);
-                //configuration.RegisterServicesFromAssembly(typeof(CampanhaCommandUpdate).Assembly);
-
                 configuration.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
-
-                //configuration.AddOpenBehavior(typeof(LoggingBehavior<,>));
-                //configuration.AddOpenBehavior(typeof(ValidationBehavior<,>));
-                //configuration.AddOpenBehavior(typeof(QueryCachingBehavior<,>));
             });
-
-            //services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly, includeInternalTypes: true);
 
             return services;
         }

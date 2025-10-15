@@ -13,8 +13,8 @@ namespace ManagementRPG.Domain.Security.Usuarios.Validators
                 .NotEmpty()
                 .NotNull()
                 .Must(u => u.Split(' ').Count() >= 2)
-                .Must(u => u.Split(' ').ToList().Select(v => 
-                    char.IsUpper(v[0])).All(v => v == true))
+                //.Must(u => u.Split(' ').ToList().Select(v => 
+                //    char.IsUpper(v[0])).All(v => v == true))
                 .Must(u => u.Split(' ').Select(x => 
                     x.Select(v => char.IsLetter(v)).All(v => v == true)).All(v => v == true))
                 .WithMessage("Nome do usuário inválido!");

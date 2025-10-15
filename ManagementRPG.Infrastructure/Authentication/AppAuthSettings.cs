@@ -2,7 +2,7 @@
 
 namespace ManagementRPG.Infrastructure.Authentication
 {
-    public class AppSettings : IAppSettings
+    public class AppAuthSettings : IAppAuthSettings
     {
         public string Secret { get; init; }
         public int ExpirationHours { get; init; }

@@ -33,7 +33,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
         //private ITokenRepository RepositoryToken;
         private UsuarioMapper Mapper;
         private UsuarioAuthLogMapper MapperAuthLog;
-        private IAppSettings Settings;
+        private IAppAuthSettings Settings;
 
         public UsuarioAuthHandler(
             ISender sender,
@@ -42,7 +42,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
             /*, ITokenRepository repositoryToken*/
             UsuarioMapper mapper,
             UsuarioAuthLogMapper mapperAuthLog, 
-            IAppSettings settings)
+            IAppAuthSettings settings)
         {
             Sender = sender;
             Repository = repository;

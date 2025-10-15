@@ -91,19 +91,20 @@ namespace ManagementRPG.Infrastructure
             //    .AddJwtBearer();
 
             //AppSettings
-            services.AddSingleton<IAppSettings>(configuration.GetSection("GeneralSettings").Get<AppSettings>()!);
+            services.AddSingleton<IAppAuthSettings>(configuration.GetSection("GeneralSettings").Get<AppAuthSettings>()!);
 
             // Obtém a seção "AppSettings" do arquivo de configuração
             var appSettingsSection = configuration.GetSection("GeneralSettings");
 
             // Configura a classe AppSettings para ser injetada via DI
-            services.Configure<AppSettings>(appSettingsSection);
+            services.Configure<AppAuthSettings>(appSettingsSection);
 
             // Obtém a instância de AppSettings
-            var appSettings = appSettingsSection.Get<AppSettings>();
+            var appSettings = appSettingsSection.Get<AppAuthSettings>();
 
             // Converte a chave secreta para um array de bytes
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+
             // Configura o serviço de autenticação JWT
             services.AddAuthentication(options =>
             {
