@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="ManagementRPG.API/ManagementRPG.API.csproj" />
+    <Project Path="ManagementRPG.Application/ManagementRPG.Application.csproj" />
+    <Project Path="ManagementRPG.Domain/ManagementRPG.Domain.csproj" />
+    <Project Path="ManagementRPG.Infrastructure/ManagementRPG.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="UnitTestsGeneral/UnitTestsGeneral.csproj" />
+  </Folder>
+</Solution>

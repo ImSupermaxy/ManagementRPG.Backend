@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using ManagementRPG.Application.Abstractions.Clock;
+using ManagementRPG.Application.Global.Campanhas.Handlers;
 using ManagementRPG.Application.Global.Campanhas.Mappers;
 using ManagementRPG.Application.Security.System.Mappers;
 using ManagementRPG.Application.Security.Usuarios.Mappers;
@@ -21,7 +22,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Quartz;
-using System.Configuration;
 using System.Text;
 
 namespace ManagementRPG.Infrastructure
@@ -56,13 +56,12 @@ namespace ManagementRPG.Infrastructure
             string connectionString = configuration.GetConnectionString("Database") ??
                                       throw new ArgumentNullException(nameof(configuration));
 
-            //EntityFrameWork to Postgress ... not used yet
-            //services.AddDbContext<ExpensesMonitorContext>(options =>
-            //    options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention());
+            //Context
+            services.AddScoped<IDBContext>(sp => new DBContextPostgres(connectionString));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             //Security - Entitys
             services.AddScoped<ISistemaRepository, SistemaRepository>();
-            //services.AddScoped<CampanhaHandler, CampanhaHandler>();
             services.AddScoped<SistemaMapper, SistemaMapper>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             //services.AddScoped<CampanhaHandler, CampanhaHandler>();
@@ -71,25 +70,14 @@ namespace ManagementRPG.Infrastructure
 
             //Global - Entitys
             services.AddScoped<ICampanhaRepository, CampanhaRepository>();
-            //services.AddScoped<CampanhaHandler, CampanhaHandler>();
+            services.AddScoped<CampanhaHandler, CampanhaHandler>();
             services.AddScoped<CampanhaMapper, CampanhaMapper>();
-
-            //Context
-            services.AddScoped<IDBContext>(sp => new DBContextPostgres(connectionString));
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-            //... 
 
             //SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
         }
 
         private static void AddAuthentication(IServiceCollection services, IConfiguration configuration)
         {
-            /*Configuração do curso*/
-            //services
-            //    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //    .AddJwtBearer();
-
             //AppSettings
             services.AddSingleton<IAppSettings>(configuration.GetSection("GeneralSettings").Get<AppSettings>()!);
 
@@ -103,7 +91,8 @@ namespace ManagementRPG.Infrastructure
             var appSettings = appSettingsSection.Get<AppSettings>();
 
             // Converte a chave secreta para um array de bytes
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            var key = Encoding.ASCII.GetBytes(appSettings?.Secret ?? "");
+
             // Configura o serviço de autenticação JWT
             services.AddAuthentication(options =>
             {

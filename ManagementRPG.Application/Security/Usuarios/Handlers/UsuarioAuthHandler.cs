@@ -12,7 +12,6 @@ using ManagementRPG.Domain.Security.Usuarios.Enums;
 using ManagementRPG.Domain.Security.Usuarios.Repositories;
 using ManagementRPG.Domain.Shared.ApiConfig.Authentication;
 using ManagementRPG.Domain.Shared.Commands;
-using ManagementRPG.Domain.Shared.Helpers;
 using MediatR;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -169,7 +168,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
 
             // Adiciona as roles como claims
             foreach (var userRole in userRoles)
-                claims.Add(new Claim(TokenAuthConfig.Role, EnumHelper<EPerfil>.GetDisplayValue(userRole)));
+                claims.Add(new Claim(TokenAuthConfig.Role, userRole.ToString()));
 
             // Cria a identidade de claims
             var identityClaims = new ClaimsIdentity();

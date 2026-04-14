@@ -1,8 +1,9 @@
+using Asp.Versioning.ApiExplorer;
 using ManagementRPG.API.Config;
+using ManagementRPG.Application;
 using ManagementRPG.Domain.Shared.ApiConfig;
 using ManagementRPG.Infrastructure;
-using ManagementRPG.Application;
-using Asp.Versioning.ApiExplorer;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,20 +19,17 @@ builder.Services.AddCors(options =>
         });
 });
 
-//builder.Host.UseSerilog((context, loggerConfig) =>
-//loggerConfig.ReadFrom.Configuration(context.Configuration));
-
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
-builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+//Configure the documentation API
+builder.Services.ConfigureDocumentationAPI();
 
 var app = builder.Build();
 RunMode.SetMode(app.Environment.IsDevelopment(), app.Environment.IsStaging(), app.Environment.IsProduction());
@@ -40,22 +38,18 @@ RunMode.SetMode(app.Environment.IsDevelopment(), app.Environment.IsStaging(), ap
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(options =>
+    app.MapScalarApiReference(options =>
     {
         foreach (ApiVersionDescription description in app.DescribeApiVersions())
         {
             string url = $"/swagger/{description.GroupName}/swagger.json";
-            string name = description.GroupName.ToUpperInvariant();
-            //options.SwaggerEndpoint(url, name);
+            options.OpenApiRoutePattern = url;
         }
 
-        //var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
-        //foreach (var description in provider.ApiVersionDescriptions)
-        //{
-        //    string url = $"/swagger/{description.GroupName}/swagger.json";
-        //    string name = description.GroupName.ToUpperInvariant();
-        //    //options.SwaggerEndpoint(url, name);
-        //}
+        options.Title = "Management API";
+        options.Theme = ScalarTheme.DeepSpace;
+        options.ForceThemeMode = ThemeMode.Dark;
+        
     });
 
     //app.ApplyMigrations();
@@ -64,10 +58,6 @@ if (app.Environment.IsDevelopment())
     //app.SeedData();
 }
 
-//app.UseRequestContextLogging();
-
-//app.UseSerilogRequestLogging();
-
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
@@ -75,10 +65,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-//app.MapHealthChecks("health", new HealthCheckOptions
-//{
-//    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-//});
 
 app.Run();

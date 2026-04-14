@@ -1,7 +1,7 @@
-﻿using Microsoft.OpenApi.Models;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Asp.Versioning.ApiExplorer;
+using Microsoft.OpenApi;
 
 namespace ManagementRPG.API.Config
 {
