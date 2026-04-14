@@ -105,13 +105,6 @@ namespace ManagementRPG.Infrastructure.Security.Usuarios.Repositories
 
         public async Task<int> Register(Usuario entity)
         {
-            if (DataBase != null)
-                DataBase.Add(entity);
-
-            AutoIncrementId();
-
-            return DataBase!.LastOrDefault()!.Id;
-
             return await Insert(entity);
         }
 

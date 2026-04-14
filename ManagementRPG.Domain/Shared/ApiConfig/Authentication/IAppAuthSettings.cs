@@ -1,6 +1,6 @@
 ﻿namespace ManagementRPG.Domain.Shared.ApiConfig.Authentication
 {
-    public interface IAppSettings
+    public interface IAppAuthSettings
     {
         string Secret { get; init; }
         int ExpirationHours { get; init; }

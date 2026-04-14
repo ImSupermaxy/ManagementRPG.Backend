@@ -96,7 +96,9 @@ namespace ManagementRPG.Domain.Abstractions.Repositories
 
         public async Task<TId> Insert(T entity)
         {
-            var props = typeof(T).GetProperties().Select(p => "@p_" + p.Name.ToLower()).Except(["@p_id", "@p_isvalid", "@p_errors"]);
+            var props = typeof(T).GetProperties()
+                .Select(p => "@p_" + p.Name.ToLower())
+                .Except(["@p_id", "@p_isvalid", "@p_errors"]);
 
             return await Uow.Context.Connection.ExecuteScalarAsync<TId>(
                 $"SELECT {GetProcEntityName()}insert({string.Join(',', props)})", 
@@ -107,7 +109,9 @@ namespace ManagementRPG.Domain.Abstractions.Repositories
 
         public async Task<bool> Update(T entity)
         {
-            var props = typeof(T).GetProperties().Select(p => "@p_" + p.Name.ToLower()).Except(["@p_isvalid", "@p_errors"]);
+            var props = typeof(T).GetProperties()
+                .Select(p => "@p_" + p.Name.ToLower())
+                .Except(["@p_isvalid", "@p_errors"]);
 
             var rows = await Uow.Context.Connection.ExecuteScalarAsync<int>(
                 $"SELECT {GetProcEntityName()}update({string.Join(',', props)})", 
