@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ManagementRPG.Domain.Abstractions.Errors
+﻿namespace ManagementRPG.Domain.Abstractions.Errors
 {
     public record Error(string Code, string Name, List<string>? Messages = null)
     {

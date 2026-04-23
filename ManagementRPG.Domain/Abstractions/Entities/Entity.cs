@@ -16,11 +16,7 @@ namespace ManagementRPG.Domain.Abstractions.Entities
             Id = id;
         }
 
-        protected abstract void Validate();
-
-        public virtual void UpdateEntity()
-        {
-        }
+        public virtual void UpdateEntity() { }
 
         public void UpdateValid()
         {
@@ -30,10 +26,18 @@ namespace ManagementRPG.Domain.Abstractions.Entities
                 Errors.Clear();
         }
 
-        public void UpdateValid(IList<ValidationFailure> errors)
+        public void UpdateValid(bool isValid, IList<ValidationFailure> errors)
         {
-            IsValid = false;
+            IsValid = isValid;
             Errors = errors;
+
+            if (errors == null)
+                Errors = Enumerable.Empty<ValidationFailure>().ToList();
+        }
+
+        public string[] GetErrors()
+        {
+            return Errors.Select(e => $"Property: {e.PropertyName};\nMessage: {e.ErrorMessage}").ToArray();
         }
     }
 
@@ -44,27 +48,18 @@ namespace ManagementRPG.Domain.Abstractions.Entities
         public DateTime UserInsData { get; private set; }
         public DateTime UserModData { get; private set; }
 
+        //Insert
         protected Entity(TUId userId)
             : base()
         {
             CreateUserLog(userId);
         }
 
-        protected Entity(TId id, TUId userInsId, DateTime userInsData, TUId userModId, DateTime userModData)
+        //Update
+        protected Entity(TId id, TUId userId)
             : base(id)
         {
-            UserInsId = userInsId;
-            UserInsData = userInsData;
-            UserModId = userModId;
-            UserModData = userModData;
-        }
-
-        protected Entity(TId id, TUId userInsId, DateTime userInsData, TUId userModId)
-          : base(id)
-        {
-            UserInsId = userInsId;
-            UserInsData = userInsData;
-            UpdateUserMod(userModId);
+            CreateUserLog(userId);
         }
 
         protected virtual void CreateUserLog(TUId userId)
@@ -87,28 +82,18 @@ namespace ManagementRPG.Domain.Abstractions.Entities
     {
         public EStatus Status { get; private set; }
 
+        //Insert
         protected EntityDefault(TUId userId)
             : base(userId)
         {
             Status = EStatus.Ativo;
         }
 
-        protected EntityDefault(TId id, EStatus status, TUId userInsId, DateTime userInsData, TUId userModId, DateTime userModData)
-            : base(id, userInsId, userInsData, userModId, userModData)
+        //Update
+        protected EntityDefault(TId id, TUId userId, EStatus status)
+            : base(id, userId)
         {
             Status = status;
-        }
-
-        protected EntityDefault(TId id, EStatus status, TUId userInsId, DateTime userInsData, TUId userModId)
-          : base(id, userInsId, userInsData, userModId)
-        {
-            Status = status;
-        }
-
-        protected virtual void CreateUserLog(TUId userId)
-        {
-            Status = EStatus.Ativo;
-            base.CreateUserLog(userId);
         }
 
         public void InactivateEntity()

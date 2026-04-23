@@ -1,5 +1,4 @@
 using Asp.Versioning.ApiExplorer;
-using ManagementRPG.API.Config;
 using ManagementRPG.Application;
 using ManagementRPG.Domain.Shared.ApiConfig;
 using ManagementRPG.Infrastructure;
@@ -25,11 +24,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Configure Application / Infrastrcuture
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
-
-//Configure the documentation API
-builder.Services.ConfigureDocumentationAPI();
 
 var app = builder.Build();
 RunMode.SetMode(app.Environment.IsDevelopment(), app.Environment.IsStaging(), app.Environment.IsProduction());

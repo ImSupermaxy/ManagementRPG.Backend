@@ -1,10 +1,9 @@
-﻿using ManagementRPG.Domain.Abstractions.Queries.Results;
+﻿using ManagementRPG.Domain.Abstractions.Responses;
 using ManagementRPG.Domain.Security.System.Enums;
-using ManagementRPG.Domain.Shared.Enums;
 
-namespace ManagementRPG.Domain.Security.System.Queries
+namespace ManagementRPG.Domain.Security.System.Responses
 {
-    public sealed class SistemaQueryResult : SistemaGeneral, IQueryResult<int, int>
+    public sealed class SistemaResponse : SistemaGeneral, IResponse<int, int>
     {
         public EStatusSistema Status { get; set; }
         public int UserInsId { get; set; }

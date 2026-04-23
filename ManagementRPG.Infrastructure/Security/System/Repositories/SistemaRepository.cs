@@ -1,38 +1,24 @@
-﻿using Dapper;
-using ManagementRPG.Domain.Abstractions.Context;
-using ManagementRPG.Domain.Abstractions.Entities;
+﻿using ManagementRPG.Domain.Abstractions.Context;
 using ManagementRPG.Domain.Abstractions.Repositories;
 using ManagementRPG.Domain.Security.System.Entities;
 using ManagementRPG.Domain.Security.System.Enums;
-using ManagementRPG.Domain.Security.System.Queries;
+using ManagementRPG.Domain.Security.System.Responses;
 using ManagementRPG.Domain.Security.System.Repositories;
-using System.Data;
+using ManagementRPG.Domain.Shared.Commands;
 
 namespace ManagementRPG.Infrastructure.Security.System.Repositories
 {
-    public class SistemaRepository : Repository<Sistema, int, int, SistemaQueryResult>, ISistemaRepository
+    public class SistemaRepository : Repository<Sistema, int, int, SistemaResponse>, ISistemaRepository
     {
         public SistemaRepository(IUnitOfWork uow) 
             : base(uow, "001")
         {
         }
 
-        public async Task<SistemaQueryResult> GetActive()
+        public async Task<bool> IsActive(int id)
         {
-            var param = GetDefaultParams(status: EStatusSistema.Online);
-            return await GetByPropertys(param);
-        }
-
-        public async Task<EStatusSistema?> GetStatusSistema()
-        {
-            return (await GetLastSistema()).Status;
-        }
-
-        public async Task<SistemaQueryResult> GetLastSistema()
-        {
-            return await Uow.Context.Connection.QueryFirstOrDefaultAsync<SistemaQueryResult>(
-                $"SELECT * FROM {GetProcEntityName()}getlast()"
-            ) ?? default!;
+            var param = GetDefaultParams(id, status: EStatusSistema.Online);
+            return (await GetByPropertys(param)) is not null;
         }
 
         protected override object GetInsertObject(Sistema entity)
@@ -64,13 +50,13 @@ namespace ManagementRPG.Infrastructure.Security.System.Repositories
             };
         }
 
-        private List<Tuple<object, string>> GetDefaultParams(int? id = null, EStatusSistema? status = null, string? versao = null)
+        private List<DataParam> GetDefaultParams(int? id = null, EStatusSistema? status = null, string? versao = null)
         {
-            var param = new List<Tuple<object, string>>
+            var param = new List<DataParam>
             {
-                new Tuple<object, string>(id ?? default!, "id"),
-                new Tuple<object, string>(status ?? default!, "status"),
-                new Tuple<object, string>(versao ?? default !, "versao")
+                new DataParam("id", id ?? default!),
+                new DataParam("status", status ?? default!),
+                new DataParam("versao", versao ?? default !)
             };
 
             return param;

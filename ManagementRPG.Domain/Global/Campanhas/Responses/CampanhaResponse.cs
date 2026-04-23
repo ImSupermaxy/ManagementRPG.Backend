@@ -1,9 +1,9 @@
-﻿using ManagementRPG.Domain.Abstractions.Queries.Results;
+﻿using ManagementRPG.Domain.Abstractions.Responses;
 using ManagementRPG.Domain.Shared.Enums;
 
-namespace ManagementRPG.Domain.Global.Campanhas.Queries
+namespace ManagementRPG.Domain.Global.Campanhas.Responses
 {
-    public sealed class CampanhaQueryResult : CampanhaGeneral, IQueryResult<int, int>
+    public sealed class CampanhaResponse : CampanhaGeneral, IResponse<int, int>
     {
         public EStatus Status { get; set; }
         public int UserInsId { get; set; }

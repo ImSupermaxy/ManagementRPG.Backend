@@ -1,12 +1,12 @@
 ﻿using ManagementRPG.Application.Security.System.Commands;
 using ManagementRPG.Application.Security.Usuarios.Commands;
 using ManagementRPG.Application.Security.Usuarios.Errors;
-using ManagementRPG.Application.Security.Usuarios.Mappers;
 using ManagementRPG.Application.Security.Usuarios.Token;
 using ManagementRPG.Application.Utils;
 using ManagementRPG.Domain.Abstractions.Commands.Handlers;
 using ManagementRPG.Domain.Abstractions.Errors;
 using ManagementRPG.Domain.Abstractions.Handlers;
+using ManagementRPG.Domain.Security.System.Repositories;
 using ManagementRPG.Domain.Security.Usuarios.Entities;
 using ManagementRPG.Domain.Security.Usuarios.Enums;
 using ManagementRPG.Domain.Security.Usuarios.Repositories;
@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using V4MAutoMapper;
 
 namespace ManagementRPG.Application.Security.Usuarios.Handlers
 {
@@ -28,44 +29,37 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
     {
         public ISender Sender;
         private IUsuarioRepository Repository;
-        //private ISistemaRepository RepositorySistema;
+        private ISistemaRepository RepositorySistema;
         //private ITokenRepository RepositoryToken;
-        private UsuarioMapper Mapper;
-        private UsuarioAuthLogMapper MapperAuthLog;
+        private IMapper Mapper;
         private IAppAuthSettings Settings;
 
         public UsuarioAuthHandler(
             ISender sender,
             IUsuarioRepository repository,
-            //ISistemaRepository repositorySistema,
+            ISistemaRepository repositorySistema,
             /*, ITokenRepository repositoryToken*/
-            UsuarioMapper mapper,
-            UsuarioAuthLogMapper mapperAuthLog, 
+            IMapper mapper,
             IAppAuthSettings settings)
         {
             Sender = sender;
             Repository = repository;
-            //RepositorySistema = repositorySistema;
-            Mapper = mapper;
-            MapperAuthLog = mapperAuthLog;
-            Settings = settings;
+            RepositorySistema = repositorySistema;
             //this.RepositoryToken = repositoryToken;
+            Mapper = mapper;
+            Settings = settings;
         }
 
         public async Task<Result<TokenModel>> Handle(UsuarioCommandRegister request, CancellationToken cancellationToken)
         {
             try
             {
-                var entity = Mapper.GetEntity(request);
+                var entity = Mapper.Map<Usuario>(request);
                 if (!entity.IsValid)
                     return Result.Failure<TokenModel>(UsuarioError.InvalidCredetials);
 
-                //REMOVE this validation
-                if (await Repository.UsuarioExist(entity.Email))
-                    return Result.Failure<TokenModel>(UsuarioError.AlreadyExist);
-
-                //REMOVE this validation
-                if (await Repository.UsuarioExist(null, entity.Arroba))
+                //FILTRAR NO BANCO COMO "OU || OR"
+                if (await Repository.UsuarioExist(entity.Email, entity.Arroba))
                     return Result.Failure<TokenModel>(UsuarioError.AlreadyExist);
 
                 var senhaHash = SenhaHasher.GerarHash(request.Password);
@@ -91,7 +85,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
                 if (!resultPerfil)
                     return Result.Failure<TokenModel>(UsuarioError.FailureRegistered);
 
-                var log = MapperAuthLog.GetAuthenticate(new UsuarioAuthLogCommandInsert()
+                var log =  Mapper.Map<UsuarioAuthLog>(new UsuarioAuthLogCommandInsert()
                 {
                     UsuarioId = newId,
                     SenhaHash = senhaHash,
@@ -103,7 +97,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
             }
             catch (Exception ex)
             {
-                return Result.Failure<TokenModel>(SystemError.GenericError, ex.Message);
+                return Result.Failure<TokenModel>(SystemError.GenericError, [ex.Message]);
             }
         }
 
@@ -127,20 +121,22 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
 
         public async Task<Result> Handle(UsuarioCommandUpdatePassword request, CancellationToken cancellationToken)
         {
-            ////TODO
-            ////Criar Tabela para salvar os tokens de redefinição de senha
-            ////Criptografar o codigo aqui e comparar com o código criptografado na tabela de TokenRedefinirSenha
-            
-            //var tokenChangePass = RepositoryToken.Get(request.SecurityCode);
-            //if (tokenChangePass is null)
-            //    return new CommandResult(false, "Tempo para redefinição de sneha expirou");
-
             var usuario = await Repository.GetByEmail(request.Email);
 
             if (usuario is null)
                 return Result.Failure(UsuarioError.InvalidCredetials);
 
-            var entity = Mapper.GetEntity(usuario);
+            ////TODO
+            ////Criar Tabela para salvar os tokens de redefinição de senha
+            ////Criptografar o codigo aqui e comparar com o código criptografado na tabela de TokenRedefinirSenha
+
+            //var tokenChangePass = RepositoryToken.Get(request.SecurityCode);
+            //if (tokenChangePass is null)
+            //    return new CommandResult(false, "Tempo para redefinição de sneha expirou");
+
+            var command = Mapper.Map<UsuarioCommandUpdate>(usuario);
+
+            var entity = Mapper.Map<Usuario>(command);
 
             var senhaHash = SenhaHasher.GerarHash(request.NewPassword);
             entity.UpdateSenha(senhaHash);

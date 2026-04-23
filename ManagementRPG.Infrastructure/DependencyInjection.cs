@@ -1,9 +1,6 @@
 ﻿using Asp.Versioning;
 using ManagementRPG.Application.Abstractions.Clock;
 using ManagementRPG.Application.Global.Campanhas.Handlers;
-using ManagementRPG.Application.Global.Campanhas.Mappers;
-using ManagementRPG.Application.Security.System.Mappers;
-using ManagementRPG.Application.Security.Usuarios.Mappers;
 using ManagementRPG.Domain.Abstractions.Context;
 using ManagementRPG.Domain.Global.Campanhas.Repositories;
 using ManagementRPG.Domain.Security.System.Repositories;
@@ -62,16 +59,12 @@ namespace ManagementRPG.Infrastructure
 
             //Security - Entitys
             services.AddScoped<ISistemaRepository, SistemaRepository>();
-            services.AddScoped<SistemaMapper, SistemaMapper>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             //services.AddScoped<CampanhaHandler, CampanhaHandler>();
-            services.AddScoped<UsuarioMapper, UsuarioMapper>();
-            services.AddScoped<UsuarioAuthLogMapper, UsuarioAuthLogMapper>();
 
             //Global - Entitys
             services.AddScoped<ICampanhaRepository, CampanhaRepository>();
             services.AddScoped<CampanhaHandler, CampanhaHandler>();
-            services.AddScoped<CampanhaMapper, CampanhaMapper>();
 
             //SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
         }

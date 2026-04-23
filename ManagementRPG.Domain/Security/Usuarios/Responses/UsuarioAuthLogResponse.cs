@@ -1,8 +1,8 @@
-﻿using ManagementRPG.Domain.Abstractions.Queries;
+﻿using ManagementRPG.Domain.Abstractions.Commands;
 
-namespace ManagementRPG.Domain.Security.Usuarios.Queries
+namespace ManagementRPG.Domain.Security.Usuarios.Responses
 {
-    public class UsuarioAuthLogQueryResult : IQuery
+    public class UsuarioAuthLogResponse : ICommand
     {
         public int UsuarioId { get; set; }
         public bool Login { get; set; }

@@ -1,15 +1,16 @@
 ﻿using Dapper;
 using ManagementRPG.Domain.Abstractions.Context;
 using ManagementRPG.Domain.Abstractions.Entities;
-using ManagementRPG.Domain.Abstractions.Queries.Results;
+using ManagementRPG.Domain.Abstractions.Responses;
+using ManagementRPG.Domain.Shared.Commands;
 using System.Data;
 using System.Linq;
 
 namespace ManagementRPG.Domain.Abstractions.Repositories
 {
-    public abstract class Repository<T, TId, TCommandQuery> : IRepository<T, TId, TCommandQuery>
+    public abstract class Repository<T, TId, TResponse> : IRepository<T, TId, TResponse>
         where T : Entity<TId>
-        where TCommandQuery : IQueryResult<TId>
+        where TResponse : IResponse<TId>
     {
         protected readonly IUnitOfWork Uow;
         private string _numberTable = "";
@@ -27,45 +28,45 @@ namespace ManagementRPG.Domain.Abstractions.Repositories
             _numberTable = numberTable;
         }
 
-        public async Task<IEnumerable<TCommandQuery>> GetAll()
+        public async Task<IEnumerable<TResponse>> GetAll()
         {
-            return await Uow.Context.Connection.QueryAsync<TCommandQuery>(
+            return await Uow.Context.Connection.QueryAsync<TResponse>(
                 $"SELECT * FROM {GetProcEntityName()}getAll()",
                 commandType: CommandType.Text
             );
         }
 
-        public async Task<TCommandQuery> GetById(TId id)
+        public async Task<TResponse> GetById(TId id)
         {
-            return await Uow.Context.Connection.QueryFirstOrDefaultAsync<TCommandQuery>(
+            return await Uow.Context.Connection.QueryFirstOrDefaultAsync<TResponse>(
                 $"SELECT * FROM {GetProcEntityName()}GetById(@p_id)",
                 new { p_id = id},
                 commandType: CommandType.Text
             ) ?? default!;
         }
 
-        public async Task<TCommandQuery> GetByPropertys(List<Tuple<object, string>> props, string customName = default!)
+        public async Task<TResponse> GetByPropertys(List<DataParam> props, string customName = default!)
         {
-            return await GetByPropertys<TCommandQuery>(props, customName);
+            return await GetByPropertys<TResponse>(props, customName);
         }
 
-        public async Task<IEnumerable<TCommandQuery>> GetAllByPropertys(List<Tuple<object, string>> props, string customName = default!)
+        public async Task<IEnumerable<TResponse>> GetAllByPropertys(List<DataParam> props, string customName = default!)
         {
-            return await GetAllByPropertys<TCommandQuery>(props, customName);
+            return await GetAllByPropertys<TResponse>(props, customName);
         }
 
-        public async Task<TResult> GetByPropertys<TResult>(List<Tuple<object, string>> props, string customName = default!)
-            where TResult : IQueryResult<TId>
+        public async Task<TResult> GetByPropertys<TResult>(List<DataParam> props, string customName = default!)
+            where TResult : IResponse<TId>
         {
             var paramsString = "";
             var param = new DynamicParameters();
 
             foreach (var prop in props)
             {
-                param.Add("p_" + prop.Item2.ToLower(), prop.Item1);
+                param.Add("p_" + prop.ParamName.ToLower(), prop.ParamValue);
             }
 
-            paramsString = string.Join(',', props.Select(p => "@p_" + p.Item2.ToLower()));
+            paramsString = string.Join(',', props.Select(p => "@p_" + p.ParamName.ToLower()));
 
             return await Uow.Context.Connection.QueryFirstOrDefaultAsync<TResult>(
                 $"SELECT * FROM {GetProcEntityName(customName)}get({paramsString})",
@@ -74,18 +75,18 @@ namespace ManagementRPG.Domain.Abstractions.Repositories
             ) ?? default!;
         }
 
-        public async Task<IEnumerable<TResult>> GetAllByPropertys<TResult>(List<Tuple<object, string>> props, string customName = default!)
-            where TResult : IQueryResult<TId>
+        public async Task<IEnumerable<TResult>> GetAllByPropertys<TResult>(List<DataParam> props, string customName = default!)
+            where TResult : IResponse<TId>
         {
             var paramsString = "";
             var param = new DynamicParameters();
 
             foreach (var prop in props)
             {
-                param.Add("p_" + prop.Item2.ToLower(), prop.Item1);
+                param.Add("p_" + prop.ParamName.ToLower(), prop.ParamValue);
             }
 
-            paramsString = string.Join(',', props.Select(p => "@p_" + p.Item2.ToLower()));
+            paramsString = string.Join(',', props.Select(p => "@p_" + p.ParamName.ToLower()));
 
             return await Uow.Context.Connection.QueryAsync<TResult>(
                 $"SELECT * FROM {GetProcEntityName(customName)}get({paramsString})",
@@ -132,10 +133,10 @@ namespace ManagementRPG.Domain.Abstractions.Repositories
         protected abstract object GetUpdateObject(T entity);
     }
 
-    public abstract class Repository<T, TId, TUId, TCommandQuery> : Repository<T, TId, TCommandQuery>,
-            IRepository<T, TId, TUId, TCommandQuery>
+    public abstract class Repository<T, TId, TUId, TResponse> : Repository<T, TId, TResponse>,
+            IRepository<T, TId, TUId, TResponse>
         where T : Entity<TId, TUId>
-        where TCommandQuery : IQueryResult<TId, TUId>
+        where TResponse : IResponse<TId, TUId>
     {
         public Repository(IUnitOfWork uow, string numberTable) 
             : base(uow, numberTable)

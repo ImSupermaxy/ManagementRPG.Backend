@@ -6,9 +6,18 @@ namespace ManagementRPG.Domain.Abstractions.Validators
 {
     public abstract class ValidatorEntity<T, TId> : AbstractValidator<T>, IValidator where T : Entity<TId>
     {
+        protected T Entity { get; set; }
+
         public ValidatorEntity(T entity)
         {
             RuleFor(e => e.Id).NotNull()/*.NotEqual((TId)default!)*/.WithMessage($"{typeof(T).Name} Id é obrigatório(a)");
+
+            Entity = entity;
+        }
+
+        public void ValidateEntity() {
+            var result = Validate(Entity);
+            Entity.UpdateValid(result.IsValid, result.Errors);
         }
     }
 

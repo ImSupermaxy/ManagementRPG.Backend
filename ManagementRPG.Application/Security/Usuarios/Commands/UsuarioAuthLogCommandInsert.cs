@@ -7,5 +7,6 @@ namespace ManagementRPG.Application.Security.Usuarios.Commands
         public int UsuarioId { get; set; }
         public string SenhaHash { get; set; }
         public string Token { get; set; }
+        public bool Login { get; set; }
     }
 }

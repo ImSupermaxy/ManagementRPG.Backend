@@ -1,22 +1,19 @@
 ﻿using ManagementRPG.Application.Security.Usuarios.Commands;
-using ManagementRPG.Application.Security.Usuarios.Mappers;
 using ManagementRPG.Domain.Abstractions.Commands.Handlers;
 using ManagementRPG.Domain.Abstractions.Handlers;
-using ManagementRPG.Domain.Abstractions.Mappers;
-using ManagementRPG.Domain.Abstractions.Repositories;
 using ManagementRPG.Domain.Security.Usuarios.Entities;
-using ManagementRPG.Domain.Security.Usuarios.Queries;
+using ManagementRPG.Domain.Security.Usuarios.Responses;
 using ManagementRPG.Domain.Security.Usuarios.Repositories;
 using ManagementRPG.Domain.Shared.Commands;
+using V4MAutoMapper;
 
 namespace ManagementRPG.Application.Security.Usuarios.Handlers
 {
-    public class UsuarioHandler : HandlerEntity<Usuario, int, int, UsuarioCommandInsert, UsuarioCommandUpdate, UsuarioQueryResult>,
+    public class UsuarioHandler : HandlerEntity<Usuario, int, int, UsuarioCommandInsert, UsuarioCommandUpdate, UsuarioResponse>,
         ICommandHandler<UsuarioCommandInsert, int>,
         ICommandHandler<UsuarioCommandUpdate>
     {
-        public UsuarioHandler(IUsuarioRepository repository, 
-            UsuarioMapper mapper) 
+        public UsuarioHandler(IUsuarioRepository repository, IMapper mapper) 
             : base(repository, mapper)
         {
         }

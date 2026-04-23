@@ -18,14 +18,5 @@ namespace ManagementRPG.Domain.Security.Usuarios.Entities
             SenhaHash = senhaHash;
             Token = login ? token : null!;
         }
-
-        public UsuarioAuthLog(int usuarioId, bool login, DateTime data, string senhaHash, string token)
-        {
-            UsuarioId = usuarioId;
-            Login = login;
-            Data = data;
-            SenhaHash = senhaHash;
-            Token = token;
-        }
     }
 }

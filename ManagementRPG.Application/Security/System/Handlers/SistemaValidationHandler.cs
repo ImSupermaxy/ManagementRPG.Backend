@@ -25,7 +25,8 @@ namespace ManagementRPG.Application.Security.System.Handlers
         {
             try
             {
-                var sistema = await Repository.GetLastSistema();
+                var sistemaTMP = 1;
+                var sistema = await Repository.GetById(sistemaTMP);//_appSettings.SistemaId
 
                 if (sistema == null)
                     return Result.Failure<int>(SystemError.GenericError);
@@ -37,7 +38,7 @@ namespace ManagementRPG.Application.Security.System.Handlers
             }
             catch (Exception ex)
             {
-                return Result.Failure<int>(SystemError.GenericError, ex.Message);
+                return Result.Failure<int>(SystemError.GenericError, [ex.Message]);
             }
         }
     }

@@ -1,7 +1,6 @@
 ﻿using ManagementRPG.Domain.Abstractions.Entities;
 using ManagementRPG.Domain.Security.Usuarios.Enums;
 using ManagementRPG.Domain.Security.Usuarios.Validators;
-using ManagementRPG.Domain.Shared.Enums;
 
 namespace ManagementRPG.Domain.Security.Usuarios.Entities
 {
@@ -14,6 +13,7 @@ namespace ManagementRPG.Domain.Security.Usuarios.Entities
         public EStatusUsuario Status { get; private set; }
         public IList<EPerfil> Perfis { get; set; }
 
+        //Insert Admin
         public Usuario(int userId, string nome, string email, string arroba, string senha) 
             : base(userId)
         {
@@ -23,32 +23,15 @@ namespace ManagementRPG.Domain.Security.Usuarios.Entities
             Senha = senha;
             Status = EStatusUsuario.Ativo;
             Perfis = new List<EPerfil>() { EPerfil.USUARIO };
-            Validate();
         }
 
-        public Usuario(int id, EStatusUsuario status, int userInsId, DateTime userInsData, int userModId, DateTime userModData,
-            string nome, string email, string arroba)
-            : base(id, userInsId, userInsData, userModId, userModData)
+        //Update Admin
+        public Usuario(int id, int userId, string nome, string email, string arroba)
+            : base(id, userId)
         {
             Nome = nome;
             Email = email;
             Arroba = arroba;
-            Status = status;
-        }
-
-        public Usuario(int id, EStatusUsuario status, int userInsId, DateTime userInsData, int userModId,
-            string nome, string arroba)
-            : base(id, userInsId, userInsData, userModId)
-        {
-            Nome = nome;
-            Arroba = arroba;
-            Status = status;
-            Validate();
-        }
-
-        protected override void Validate()
-        {
-            new UsuarioValidator(this);
         }
 
         protected override void CreateUserLog(int userId)

@@ -1,5 +1,4 @@
-﻿using ManagementRPG.Domain.Abstractions.Commands.Results;
-using ManagementRPG.Domain.Abstractions.Errors;
+﻿using ManagementRPG.Domain.Abstractions.Errors;
 using ManagementRPG.Domain.Shared.ApiConfig;
 using System.Diagnostics.CodeAnalysis;
 
@@ -7,7 +6,7 @@ namespace ManagementRPG.Domain.Shared.Commands
 {
     public class Result
     {
-        public Result(bool isSuccess, Error error, string exception = default!)
+        public Result(bool isSuccess, Error error, string[] exceptions = default!)
         {
             if (isSuccess && error != Error.None)
             {
@@ -20,7 +19,7 @@ namespace ManagementRPG.Domain.Shared.Commands
             }
 
             IsSuccess = isSuccess;
-            Error = new Error(error.Code, error.Name, RunMode.IsDev() ? [exception] : null);
+            Error = new Error(error.Code, error.Name, RunMode.IsDev() ? exceptions.ToList() : null);
         }
 
         public bool IsSuccess { get; }
@@ -28,10 +27,10 @@ namespace ManagementRPG.Domain.Shared.Commands
         public Error Error { get; }
         public static Result Success() => new(true, Error.None);
         public static Result Failure(Error error) => new(false, error);
-        public static Result Failure(Error error, string exception) => new(false, error, exception);
+        public static Result Failure(Error error, string[] exception) => new(false, error, exception);
         public static Result<TValue> Success<TValue>(TValue value) => new(value, true, Error.None);
         public static Result<TValue> Failure<TValue>(Error error) => new(default, false, error);
-        public static Result<TValue> Failure<TValue>(Error error, string exception) => new(default, false, error, exception);
+        public static Result<TValue> Failure<TValue>(Error error, string[] exception) => new(default, false, error, exception);
         public static Result<TValue> Create<TValue>(TValue? value) =>
             value is not null ? Success(value) : Failure<TValue>(Error.NullValue);
     }
@@ -40,8 +39,8 @@ namespace ManagementRPG.Domain.Shared.Commands
     {
         private readonly TValue? _value;
 
-        public Result(TValue? value, bool isSuccess, Error error, string exception = default!)
-            : base(isSuccess, error, exception)
+        public Result(TValue? value, bool isSuccess, Error error, string[] exceptions = default!)
+            : base(isSuccess, error, exceptions)
         {
             _value = value;
         }

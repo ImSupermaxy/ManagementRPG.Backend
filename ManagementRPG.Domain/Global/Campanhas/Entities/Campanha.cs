@@ -1,5 +1,4 @@
 ﻿using ManagementRPG.Domain.Abstractions.Entities;
-using ManagementRPG.Domain.Global.Campanhas.Validators;
 using ManagementRPG.Domain.Shared.Enums;
 
 namespace ManagementRPG.Domain.Global.Campanhas.Entities
@@ -11,6 +10,7 @@ namespace ManagementRPG.Domain.Global.Campanhas.Entities
         public string Descricao { get; private set; }
         public string Sinopse { get; private set; }
 
+        //Insert
         public Campanha(int userId, int mestreId, string nome, string descricao, string sinopse)
             : base(userId)
         {
@@ -18,34 +18,16 @@ namespace ManagementRPG.Domain.Global.Campanhas.Entities
             Nome = nome;
             Descricao = descricao;
             Sinopse = sinopse;
-
-            Validate();
         }
 
-        public Campanha(int id, EStatus status, int userInsId, DateTime userInsData, int userModId, DateTime userModData, 
-            int mestreId, string nome, string descricao, string sinopse)
-            : base(id, status, userInsId, userInsData, userModId, userModData)
+        //Update
+        public Campanha(int id, EStatus status, int userId, int mestreId, string nome, string descricao, string sinopse)
+            : base(id, userId, status)
         {
             MestreId = mestreId;
             Nome = nome;
             Descricao = descricao;
             Sinopse = sinopse;
-        }
-
-        public Campanha(int id, EStatus status, int userInsId, DateTime userInsData, int userModId, string nome, 
-            string descricao, string sinopse)
-            : base(id, status, userInsId, userInsData, userModId)
-        {
-            Nome = nome;
-            Descricao = descricao;
-            Sinopse = sinopse;
-
-            Validate();
-        }
-
-        protected override void Validate()
-        {
-            new CampanhaValidator(this);
         }
     }
 }

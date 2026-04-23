@@ -2,141 +2,143 @@
 using ManagementRPG.Domain.Abstractions.Commands.Updates;
 using ManagementRPG.Domain.Abstractions.Entities;
 using ManagementRPG.Domain.Abstractions.Errors;
-using ManagementRPG.Domain.Abstractions.Mappers;
-using ManagementRPG.Domain.Abstractions.Queries.Results;
 using ManagementRPG.Domain.Abstractions.Repositories;
+using ManagementRPG.Domain.Abstractions.Responses;
 using ManagementRPG.Domain.Shared.ApiConfig;
 using ManagementRPG.Domain.Shared.Commands;
+using V4MAutoMapper;
 
 namespace ManagementRPG.Domain.Abstractions.Handlers
 {
-    public class HandlerEntity<T, TId, TCommandInsert, TCommandUpdate, TCommandQuery> 
-            : IHandlerEntity<TId, TCommandInsert, TCommandUpdate>
+    public class HandlerEntity<T, TId, TInsert, TUpdate, TResponse> 
+            : IHandlerEntity<TId, TInsert, TUpdate>
         where T : Entity<TId>
-        where TCommandInsert : ICommandInsert
-        where TCommandUpdate : ICommandUpdate<TId>
-        where TCommandQuery : IQueryResult<TId>
+        where TInsert : ICommandInsert
+        where TUpdate : ICommandUpdate<TId>
+        where TResponse : IResponse<TId>
     {
-        protected IRepository<T, TId, TCommandQuery> Repository { get; set; }
-        protected IMapperEntity<T, TId, TCommandInsert, TCommandUpdate, TCommandQuery> Mapper { get; set; }
+        protected IRepository<T, TId, TResponse> Repository { get; set; }
 
-        public HandlerEntity(IRepository<T, TId, TCommandQuery> repository, 
-            IMapperEntity<T, TId, TCommandInsert, TCommandUpdate, TCommandQuery> mapper)
+        protected IMapper Mapper;
+
+        public HandlerEntity(IRepository<T, TId, TResponse> repository, IMapper mapper)
         {
             Repository = repository;
             Mapper = mapper;
         }
 
-        public virtual async Task<Result<TId>> HandleInsert(TCommandInsert command)
+        public virtual async Task<Result<TId>> HandleInsert(TInsert command)
         {
             try
             {
-                var entity = Mapper.GetEntity(command);
+                var entity = Mapper.Map<T>(command);
 
                 if (!entity.IsValid)
-                    return Result.Failure<TId>(EntityError<T, TId>.Invalid); //entity.Errors???
+                    return Result.Failure<TId>(EntityError<T, TId>.Invalid, entity.GetErrors());
 
                 var newId = await Repository.Insert(entity);
                 if (newId == IdentifierTypeManager<TId>.GetDefaultValue())
-                    return Result.Failure<TId>(EntityError<T, TId>.NotCreated); //entity.Errors???
+                    return Result.Failure<TId>(EntityError<T, TId>.NotCreated);
 
                 return Result.Success(newId);
             }
             catch (Exception ex)
             {
-                return Result.Failure<TId>(EntityError<T, TId>.NotCreated, ex.Message);
+                return Result.Failure<TId>(EntityError<T, TId>.NotCreated, [ex.Message]);
             }
         }
 
-        public virtual async Task<Result> HandleUpdate(TCommandUpdate command)
+        public virtual async Task<Result> HandleUpdate(TUpdate command)
         {
             try
             {
                 var query = await Repository.GetById(command.Id);
-                var entity = Mapper.GetEntity(query, command);
+                if (query is null)
+                    return Result.Failure(EntityError<T, TId>.Invalid);
+
+                var entity = Mapper.Map<T>(command);
 
                 if (!entity.IsValid)
-                    return Result.Failure(EntityError<T, TId>.Invalid); //entity.Errors???
+                    return Result.Failure(EntityError<T, TId>.Invalid, entity.GetErrors());
 
                 if (!(await Repository.Update(entity)))
-                    return Result.Failure(EntityError<T, TId>.NotUpdated); //entity.Errors???
+                    return Result.Failure(EntityError<T, TId>.NotUpdated);
 
                 return Result.Success();
             }
             catch (Exception ex)
             {
-                return Result.Failure(EntityError<T, TId>.NotUpdated, ex.Message);
+                return Result.Failure(EntityError<T, TId>.NotUpdated, [ex.Message]);
             }
         }
 
     }
 
-    public class HandlerEntity<T, TId, TUId, TCommandInsert, TCommandUpdate, TCommandQuery>
-            : HandlerEntity<T, TId, TCommandInsert, TCommandUpdate, TCommandQuery>,
-            IHandlerEntity<TId, TUId, TCommandInsert, TCommandUpdate>
+    public class HandlerEntity<T, TId, TUId, TInsert, TUpdate, TResponse>
+            : HandlerEntity<T, TId, TInsert, TUpdate, TResponse>,
+            IHandlerEntity<TId, TUId, TInsert, TUpdate>
         where T : Entity<TId, TUId>
-        where TCommandInsert : ICommandInsert<TUId>
-        where TCommandUpdate : ICommandUpdate<TId, TUId>
-        where TCommandQuery : IQueryResult<TId, TUId>
+        where TInsert : ICommandInsert<TUId>
+        where TUpdate : ICommandUpdate<TId, TUId>
+        where TResponse : IResponse<TId, TUId>
     {
 
-        protected HandlerEntity(IRepository<T, TId, TUId, TCommandQuery> repository, 
-            IMapperEntity<T, TId, TUId, TCommandInsert, TCommandUpdate, TCommandQuery> mapper) 
+        protected HandlerEntity(IRepository<T, TId, TUId, TResponse> repository, IMapper mapper)
             : base(repository, mapper)
         {
         }
 
     }
 
-    public class HandlerQuery<T, TCommandQuery, TId> : IHandlerQuery<TCommandQuery, TId>
+    public class HandlerQuery<T, TResponse, TId> : IHandlerQuery<TResponse, TId>
         where T : Entity<TId>
-        where TCommandQuery : IQueryResult<TId>
+        where TResponse : IResponse<TId>
     {
-        protected IRepository<T, TId, TCommandQuery> Repository { get; set; }
+        protected IRepository<T, TId, TResponse> Repository { get; set; }
 
-        public HandlerQuery(IRepository<T, TId, TCommandQuery> repository)
+        public HandlerQuery(IRepository<T, TId, TResponse> repository)
         {
             Repository = repository;
         }
 
-        public virtual async Task<Result<IEnumerable<TCommandQuery>>> HandleGetAll()
+        public virtual async Task<Result<IEnumerable<TResponse>>> HandleGetAll()
         {
             try
             {
                 var result = await Repository.GetAll();
                 if (result == null)
-                    return Result.Failure<IEnumerable<TCommandQuery>>(EntityError<T, TId>.NotFound);
+                    return Result.Failure<IEnumerable<TResponse>>(EntityError<T, TId>.NotFound);
 
                 return Result.Success(result);
             }
             catch (Exception ex)
             {
-                return Result.Failure<IEnumerable<TCommandQuery>>(EntityError<T, TId>.NotFound, ex.Message);
+                return Result.Failure<IEnumerable<TResponse>>(EntityError<T, TId>.NotFound, [ex.Message]);
             }
         }
 
-        public virtual async Task<Result<TCommandQuery>> HandleGet(TId id)
+        public virtual async Task<Result<TResponse>> HandleGet(TId id)
         {
             try
             {
                 var result = await Repository.GetById(id);
                 if (result == null)
-                    return Result.Failure<TCommandQuery>(EntityError<T, TId>.NotFound);
+                    return Result.Failure<TResponse>(EntityError<T, TId>.NotFound);
 
                 return Result.Success(result);
             }
             catch (Exception ex)
             {
-                return Result.Failure<TCommandQuery>(EntityError<T, TId>.NotFound);
+                return Result.Failure<TResponse>(EntityError<T, TId>.NotFound);
             }
         }
     }
 
-    public class HandlerQuery<T, TCommandQuery, TId, TUId> : HandlerQuery<T, TCommandQuery, TId>
+    public class HandlerQuery<T, TResponse, TId, TUId> : HandlerQuery<T, TResponse, TId>
         where T : Entity<TId, TUId>
-        where TCommandQuery : IQueryResult<TId, TUId>
+        where TResponse : IResponse<TId, TUId>
     {
-        public HandlerQuery(IRepository<T, TId, TUId, TCommandQuery> repository) 
+        public HandlerQuery(IRepository<T, TId, TUId, TResponse> repository) 
             : base(repository)
         { 
         }

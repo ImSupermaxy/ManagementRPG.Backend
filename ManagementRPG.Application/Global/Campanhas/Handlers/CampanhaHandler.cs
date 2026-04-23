@@ -2,20 +2,20 @@
 using ManagementRPG.Domain.Abstractions.Commands.Handlers;
 using ManagementRPG.Domain.Shared.Commands;
 using ManagementRPG.Application.Global.Campanhas.Commands;
-using ManagementRPG.Application.Global.Campanhas.Mappers;
-using ManagementRPG.Domain.Global.Campanhas.Queries;
+using ManagementRPG.Domain.Global.Campanhas.Responses;
 using ManagementRPG.Domain.Global.Campanhas.Repositories;
 using ManagementRPG.Domain.Global.Campanhas.Entities;
+using V4MAutoMapper;
 
 namespace ManagementRPG.Application.Global.Campanhas.Handlers
 {
-    public sealed class CampanhaHandler : HandlerEntity<Campanha, int, int, CampanhaCommandInsert, CampanhaCommandUpdate, CampanhaQueryResult>,
+    public sealed class CampanhaHandler : HandlerEntity<Campanha, int, int, CampanhaCommandInsert, CampanhaCommandUpdate, CampanhaResponse>,
         ICommandHandler<CampanhaCommandInsert, int>,
         ICommandHandler<CampanhaCommandUpdate>
         //,ICommandHandler<CampanhaCommandRemove>
     {
 
-        public CampanhaHandler(ICampanhaRepository repository, CampanhaMapper mapper) 
+        public CampanhaHandler(ICampanhaRepository repository, IMapper mapper) 
             : base(repository, mapper)
         {
         }
