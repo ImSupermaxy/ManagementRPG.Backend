@@ -1,4 +1,4 @@
-﻿namespace ManagementRPG.Domain.Shared.ApiConfig.Authentication
+﻿namespace ManagementRPG.Domain.Shared.ApiConfig.Settings
 {
     public static class TokenAuthConfig
     {

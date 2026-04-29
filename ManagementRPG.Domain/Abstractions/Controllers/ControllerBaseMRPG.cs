@@ -1,5 +1,5 @@
 ﻿using ManagementRPG.Domain.Shared.ApiConfig;
-using ManagementRPG.Domain.Shared.ApiConfig.Authentication;
+using ManagementRPG.Domain.Shared.ApiConfig.Settings;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 

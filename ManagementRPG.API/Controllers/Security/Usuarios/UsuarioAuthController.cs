@@ -30,7 +30,7 @@ namespace ManagementRPG.API.Controllers.Security.Usuarios
             if (result.IsFailure)
                 return Unauthorized(result);
 
-            return Ok(new { Token = result.Value });
+            return Ok(result);
         }
 
         [HttpPost("register")]
@@ -43,7 +43,7 @@ namespace ManagementRPG.API.Controllers.Security.Usuarios
             if (result.IsFailure)
                 return BadRequest(result);
 
-            return Ok(new { Token = result.Value });
+            return Ok(result);
         }
 
         [HttpPatch("inactivate")]

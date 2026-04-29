@@ -22,8 +22,4 @@
     <ProjectReference Include="..\ManagementRPG.Domain\ManagementRPG.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Context\Postgres\Global\Campanhas\" />
-  </ItemGroup>
-
 </Project>

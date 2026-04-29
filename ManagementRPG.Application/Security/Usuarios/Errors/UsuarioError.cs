@@ -1,4 +1,4 @@
-﻿using ManagementRPG.Domain.Abstractions.Errors;
+﻿using ManagementRPG.Domain.Abstractions.Messages.Errors;
 
 namespace ManagementRPG.Application.Security.Usuarios.Errors
 {
@@ -19,15 +19,15 @@ namespace ManagementRPG.Application.Security.Usuarios.Errors
 
         public static readonly Error InvalidCredetials = new(
             "Notification.UsuarioInvalidCredetials",
-            $"Usuario Email or(and) Password is(are) wrong");
+            $"Usuario Email or(and) Password is(are) invalid");
 
         public static readonly Error FailureLogin = new(
             "Notification.UsuarioFailureLogin",
-            $"Usuario Email or(and) Password is(are) wrong");
+            $"Usuario Email or(and) Password is(are) invalid");
 
         public static readonly Error FailureAuthentication = new(
             "Notification.UsuarioFailureAuthentication",
-            $"Usuario Email or(and) Password is(are) wrong");
+            $"Usuario Email or(and) Password is(are) invalid");
 
         public static readonly Error NotAuthorized = new(
             "Notification.UsuarioNotAuthorized",

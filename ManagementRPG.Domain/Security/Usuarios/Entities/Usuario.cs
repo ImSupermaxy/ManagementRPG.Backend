@@ -1,6 +1,5 @@
 ﻿using ManagementRPG.Domain.Abstractions.Entities;
 using ManagementRPG.Domain.Security.Usuarios.Enums;
-using ManagementRPG.Domain.Security.Usuarios.Validators;
 
 namespace ManagementRPG.Domain.Security.Usuarios.Entities
 {
@@ -9,9 +8,9 @@ namespace ManagementRPG.Domain.Security.Usuarios.Entities
         public string Nome { get; private set; }
         public string Email { get; private set; }
         public string Arroba { get; private set; }
-        public string Senha { get; private set; }
+        public string SenhaHash { get; private set; }
         public EStatusUsuario Status { get; private set; }
-        public IList<EPerfil> Perfis { get; set; }
+        //public IList<EPerfil> Perfis { get; set; }
 
         //Insert Admin
         public Usuario(int userId, string nome, string email, string arroba, string senha) 
@@ -20,9 +19,9 @@ namespace ManagementRPG.Domain.Security.Usuarios.Entities
             Nome = nome;
             Email = email;
             Arroba = arroba;
-            Senha = senha;
+            SenhaHash = senha;
             Status = EStatusUsuario.Ativo;
-            Perfis = new List<EPerfil>() { EPerfil.USUARIO };
+            //Perfis = new List<EPerfil>() { EPerfil.USUARIO };
         }
 
         //Update Admin
@@ -42,7 +41,7 @@ namespace ManagementRPG.Domain.Security.Usuarios.Entities
 
         public void UpdateSenha(string senhaHasher)
         {
-            Senha = senhaHasher;
+            SenhaHash = senhaHasher;
         }
 
         public void InactiveUsuario()

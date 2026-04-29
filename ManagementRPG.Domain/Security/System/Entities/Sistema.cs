@@ -21,7 +21,7 @@ namespace ManagementRPG.Domain.Security.System.Entities
         //Update
         public Sistema(int id, EStatusSistema status, int userId, 
             string nome, string versao) 
-            : base(userId)
+            : base(id, userId)
         {
             Nome = nome;
             Versao = versao;

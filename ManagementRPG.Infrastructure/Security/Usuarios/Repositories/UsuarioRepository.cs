@@ -1,12 +1,14 @@
 ﻿using Dapper;
 using ManagementRPG.Domain.Abstractions.Context;
 using ManagementRPG.Domain.Abstractions.Repositories;
+using ManagementRPG.Domain.Security.System.Entities;
 using ManagementRPG.Domain.Security.Usuarios.Entities;
 using ManagementRPG.Domain.Security.Usuarios.Enums;
-using ManagementRPG.Domain.Security.Usuarios.Responses;
 using ManagementRPG.Domain.Security.Usuarios.Repositories;
+using ManagementRPG.Domain.Security.Usuarios.Responses;
 using ManagementRPG.Domain.Shared.Commands;
 using System.Data;
+using System.Text;
 
 namespace ManagementRPG.Infrastructure.Security.Usuarios.Repositories
 {
@@ -33,41 +35,23 @@ namespace ManagementRPG.Infrastructure.Security.Usuarios.Repositories
 
         public async Task<UsuarioResponse> GetByEmail(string email)
         {
-            var param = new DynamicParameters();
-            param.Add("email", email);
+            //TODO:
+            //Verificar o pq o GetByPRopertys Não funcionou...
+            var sql = new StringBuilder();
+            sql.AppendLine("SELECT ");
+            sql.AppendLine("    * ");
+            sql.AppendLine($"FROM tbl_002_usuario t002 ");
+            sql.AppendLine($"WHERE t002.Email = '{email}'; ");
 
-            return await Uow.Context.Connection
-                                .QueryFirstAsync<UsuarioResponse>($"{GetProcEntityName()}view ou proc",
-                                    param,
-                                    commandType: CommandType.StoredProcedure);
-        }
-
-        public async Task<bool> Authenticate(UsuarioAuthLog entity)
-        {
-            var rows = await Uow.Context.Connection
-                                .QueryFirstAsync<int>($"sp005insert",
-                                    new
-                                    {
-                                        usuarioid = entity.UsuarioId,
-                                        login = entity.Login,
-                                        data = entity.Data,
-                                        senha = entity.SenhaHash,
-                                        token = entity.Token
-                                    },
-                                    transaction: Uow.Transaction,
-                                    commandType: CommandType.StoredProcedure);
-            return rows == 1;
+            return await Uow.Context.Connection.QueryFirstOrDefaultAsync<UsuarioResponse>(
+                sql.ToString(),
+                commandType: CommandType.Text
+            ) ?? default!;
         }
 
         public async Task<bool> UsuarioExist(string email, string arroba)
         {
-            var props = new List<DataParam>()
-            {
-                new DataParam(email, "email"),
-                new DataParam(arroba, "arroba"),
-            };
-
-            return (await GetByPropertys(props)) is not null;
+            return (await GetByPropertys(GetDefaultParams(email: email, arroba: arroba))) is not null;
         }
 
         public async Task<int> Register(Usuario entity)
@@ -75,37 +59,17 @@ namespace ManagementRPG.Infrastructure.Security.Usuarios.Repositories
             return await Insert(entity);
         }
 
-        public async Task<bool> InsertUpdatePerfis(EPerfil[] perfis, int usuarioId, int sistemaId)
-        {
-            var sql = "";
-
-            var result = await Uow.Context.Connection
-                .QueryFirstAsync<int>(sql.ToString(),
-                    perfis.Select(perfil =>
-                    new
-                    {
-                        usuarioId,
-                        sistemaId,
-                        perfil
-                    }),
-                    transaction: Uow.Transaction,
-                    commandType: CommandType.Text);
-
-            throw new NotImplementedException("NAO FOI TERMINADO!!");
-        }
-
         protected override object GetInsertObject(Usuario entity)
         {
             return new
             {
-                nome = entity.Nome,
-                email = entity.Email,
-                arroba = entity.Arroba,
-                senha = entity.Senha,
-                userinsid = entity.UserInsId,
-                userinsdate = entity.UserInsData,
-                usermodid = entity.UserModId,
-                usermoddate = entity.UserModData
+                p_nome = entity.Nome,
+                p_email = entity.Email,
+                p_arroba = entity.Arroba,
+                p_status = entity.Status,
+                p_senhahash = entity.SenhaHash,
+                p_userinsid = entity.UserInsId,
+                p_userinsdata = entity.UserInsData,
             };
         }
 
@@ -113,16 +77,29 @@ namespace ManagementRPG.Infrastructure.Security.Usuarios.Repositories
         {
             return new
             {
-                id = entity.Id,
-                nome = entity.Nome,
-                email = entity.Email,
-                arroba = entity.Arroba,
-                senha = entity.Senha,
-                userinsid = entity.UserInsId,
-                userinsdate = entity.UserInsData,
-                usermodid = entity.UserModId,
-                usermoddate = entity.UserModData
+                p_id = entity.Id,
+                p_nome = entity.Nome,
+                p_email = entity.Email,
+                p_arroba = entity.Arroba,
+                p_status = entity.Status,
+                p_senhahash = entity.SenhaHash,
+                p_usermodid = entity.UserModId,
+                p_usermoddata = entity.UserModData
             };
+        }
+
+        private List<DataParam> GetDefaultParams(int? id = null, string email = null!, string arroba = null!, EStatusUsuario? status = null)
+        {
+            var props = new List<DataParam>()
+            {
+                new DataParam("id", id, DbType.Int32),
+                new DataParam("nome", email, DbType.String),
+                new DataParam("email", email, DbType.String),
+                new DataParam("arroba", arroba, DbType.String),
+                new DataParam("status", status, DbType.Int16),
+            };
+
+            return props;
         }
     }
 }

@@ -27,7 +27,8 @@ namespace ManagementRPG.Application
                 typeof(SistemaProfile).Assembly,
                 typeof(CampanhaProfile).Assembly,
                 typeof(UsuarioProfile).Assembly,
-                typeof(UsuarioAuthLogProfile).Assembly
+                typeof(UsuarioAuthLogProfile).Assembly,
+                typeof(UsuarioPerfilProfile).Assembly
             );
 
             return services;

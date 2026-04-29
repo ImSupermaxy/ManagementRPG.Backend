@@ -1,15 +1,13 @@
-CREATE OR REPLACE FUNCTION sp001get(p_id int, p_status SMALLINT, p_versao varchar(24))
-RETURNS TABLE(id INT, nome VARCHAR, versao VARCHAR, status SMALLINT, userinsid int, usermodid int, userinsdata TIMESTAMP, usermoddata TIMESTAMP)
+CREATE OR REPLACE FUNCTION sp002getbyid(p_id int)
+RETURNS TABLE(id INT, nome VARCHAR, email varchar, arroba varchar, senhahash varchar, status SMALLINT, userinsid int, usermodid int, userinsdata TIMESTAMP, usermoddata TIMESTAMP)
 LANGUAGE plpgsql
 AS $$
 BEGIN
     RETURN QUERY
     SELECT *
-    FROM tbl_001_sistema t001
-    WHERE t001.id = COALESCE(p_id, t001.id)
-	AND t001.status = COALESCE(p_status, t001.status)
-	AND t001.versao = COALESCE(p_versao, t001.versao);
+    FROM tbl_002_usuario t002
+    WHERE t002.id = COALESCE(p_id, t002.id);
 END;
 $$;
 
-SELECT * FROM sp001get(1, null, null);
+SELECT * FROM sp002getbyid(null);

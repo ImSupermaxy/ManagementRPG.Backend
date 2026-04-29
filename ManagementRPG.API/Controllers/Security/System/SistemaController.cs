@@ -1,7 +1,9 @@
 ﻿using Asp.Versioning;
+using ManagementRPG.API.Authorization;
 using ManagementRPG.Application.Security.System.Commands;
 using ManagementRPG.Domain.Abstractions.Controllers;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManagementRPG.API.Controllers.Security.System
@@ -9,7 +11,7 @@ namespace ManagementRPG.API.Controllers.Security.System
     [ApiController]
     [ApiVersion(ApiVersions.Version)]
     [Route("api/v{version:apiVersion}/sistema")]
-    //[Authorize(Roles = MasterONLY)]
+    [Authorize(Policy = Policy.COMMON)]
     public class SistemaController : ControllerBase, IController<int, int, SistemaCommandInsert, SistemaCommandUpdate>
     {
         public ISender Sender { get; }

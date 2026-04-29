@@ -1,9 +1,11 @@
 ﻿using ManagementRPG.Application.Security.Usuarios.Commands;
 using ManagementRPG.Domain.Abstractions.Commands.Handlers;
 using ManagementRPG.Domain.Abstractions.Handlers;
+using ManagementRPG.Domain.Abstractions.Messages.Errors;
+using ManagementRPG.Domain.Abstractions.Messages.Successes;
 using ManagementRPG.Domain.Security.Usuarios.Entities;
-using ManagementRPG.Domain.Security.Usuarios.Responses;
 using ManagementRPG.Domain.Security.Usuarios.Repositories;
+using ManagementRPG.Domain.Security.Usuarios.Responses;
 using ManagementRPG.Domain.Shared.Commands;
 using V4MAutoMapper;
 
@@ -20,12 +22,17 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
 
         public async Task<Result<int>> Handle(UsuarioCommandInsert request, CancellationToken cancellationToken)
         {
-            return await HandleInsert(request);
+            return Result.Failure<int>(SystemError.GenericError);
+
+            var result = await HandleInsert(request);
+            return Result.SuccessChain(result, SuccessMethodTask<UsuarioCommandInsert>.CommandMethod, SuccessTask.GetRunedMethodName());
         }
 
         public async Task<Result> Handle(UsuarioCommandUpdate request, CancellationToken cancellationToken)
         {
-            return await HandleUpdate(request);
+            var result = await HandleUpdate(request);
+
+            return Result.SuccessChain(result, SuccessMethodTask<UsuarioCommandInsert>.CommandMethod, SuccessTask.GetRunedMethodName());
         }
     }
 }

@@ -1,9 +1,6 @@
-﻿using ManagementRPG.Domain.Abstractions.Entities;
-
-namespace ManagementRPG.Domain.Abstractions.Errors
+﻿namespace ManagementRPG.Domain.Abstractions.Messages.Errors
 {
-    public static class EntityError<T, TId>
-        where T : Entity<TId>
+    public static class EntityError<T>
     {
         public static readonly Error NotFound = new(
             "Notification.EntityNotFound",

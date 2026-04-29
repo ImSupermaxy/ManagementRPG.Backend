@@ -1,4 +1,4 @@
-﻿namespace ManagementRPG.Domain.Abstractions.Errors
+﻿namespace ManagementRPG.Domain.Abstractions.Messages.Errors
 {
     public static class SystemError
     {
@@ -20,6 +20,10 @@
 
         public static readonly Error GenericError = new(
             "Notification.SystemGenericError",
+            $"An or more errors occurred");
+
+        public static readonly Error CatchedException = new(
+            "Notification.SystemException",
             $"An or more errors occurred");
     }
 }

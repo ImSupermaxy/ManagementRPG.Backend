@@ -1,7 +1,7 @@
 ﻿using ManagementRPG.Application.Security.System.Commands;
 using ManagementRPG.Domain.Abstractions.Commands.Handlers;
-using ManagementRPG.Domain.Abstractions.Errors;
 using ManagementRPG.Domain.Abstractions.Handlers;
+using ManagementRPG.Domain.Abstractions.Messages.Errors;
 using ManagementRPG.Domain.Security.System.Repositories;
 using ManagementRPG.Domain.Shared.ApiConfig;
 using ManagementRPG.Domain.Shared.Commands;

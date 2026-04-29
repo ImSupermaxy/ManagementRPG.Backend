@@ -4,7 +4,6 @@ using ManagementRPG.Domain.Abstractions.Entities;
 using ManagementRPG.Domain.Abstractions.Responses;
 using ManagementRPG.Domain.Shared.Commands;
 using System.Data;
-using System.Linq;
 
 namespace ManagementRPG.Domain.Abstractions.Repositories
 {
@@ -40,7 +39,7 @@ namespace ManagementRPG.Domain.Abstractions.Repositories
         {
             return await Uow.Context.Connection.QueryFirstOrDefaultAsync<TResponse>(
                 $"SELECT * FROM {GetProcEntityName()}GetById(@p_id)",
-                new { p_id = id},
+                new { p_id = id },
                 commandType: CommandType.Text
             ) ?? default!;
         }
@@ -62,14 +61,13 @@ namespace ManagementRPG.Domain.Abstractions.Repositories
             var param = new DynamicParameters();
 
             foreach (var prop in props)
-            {
-                param.Add("p_" + prop.ParamName.ToLower(), prop.ParamValue);
-            }
+                param.Add("p_" + prop.ParamName.ToLower(), prop.ParamValue, prop.TypeValue);
 
             paramsString = string.Join(',', props.Select(p => "@p_" + p.ParamName.ToLower()));
+            var sql = $"SELECT * FROM {GetProcEntityName(customName)}get({paramsString})";
 
             return await Uow.Context.Connection.QueryFirstOrDefaultAsync<TResult>(
-                $"SELECT * FROM {GetProcEntityName(customName)}get({paramsString})",
+                sql,
                 param,
                 commandType: CommandType.Text
             ) ?? default!;
@@ -82,9 +80,7 @@ namespace ManagementRPG.Domain.Abstractions.Repositories
             var param = new DynamicParameters();
 
             foreach (var prop in props)
-            {
-                param.Add("p_" + prop.ParamName.ToLower(), prop.ParamValue);
-            }
+                param.Add("p_" + prop.ParamName.ToLower(), prop.ParamValue, prop.TypeValue);
 
             paramsString = string.Join(',', props.Select(p => "@p_" + p.ParamName.ToLower()));
 
@@ -99,7 +95,7 @@ namespace ManagementRPG.Domain.Abstractions.Repositories
         {
             var props = typeof(T).GetProperties()
                 .Select(p => "@p_" + p.Name.ToLower())
-                .Except(["@p_id", "@p_isvalid", "@p_errors"]);
+                .Except(["@p_id", "@p_usermodid", "@p_usermoddata", "@p_isvalid", "@p_errors"]);
 
             return await Uow.Context.Connection.ExecuteScalarAsync<TId>(
                 $"SELECT {GetProcEntityName()}insert({string.Join(',', props)})", 
@@ -112,7 +108,7 @@ namespace ManagementRPG.Domain.Abstractions.Repositories
         {
             var props = typeof(T).GetProperties()
                 .Select(p => "@p_" + p.Name.ToLower())
-                .Except(["@p_isvalid", "@p_errors"]);
+                .Except(["@p_isvalid", "@p_userinsid", "@p_userinsdata", "@p_errors"]);
 
             var rows = await Uow.Context.Connection.ExecuteScalarAsync<int>(
                 $"SELECT {GetProcEntityName()}update({string.Join(',', props)})", 
@@ -123,10 +119,7 @@ namespace ManagementRPG.Domain.Abstractions.Repositories
             return rows == 1;
         }
 
-        protected string GetProcEntityName(string customName = default!)
-        {
-            return $"sp{customName}{_numberTable}";
-        }
+        protected string GetProcEntityName(string customName = default!) => $"sp{customName}{_numberTable}";
 
         protected abstract object GetInsertObject(T entity);
 

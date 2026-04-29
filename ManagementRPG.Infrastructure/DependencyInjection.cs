@@ -1,11 +1,10 @@
 ﻿using Asp.Versioning;
 using ManagementRPG.Application.Abstractions.Clock;
-using ManagementRPG.Application.Global.Campanhas.Handlers;
 using ManagementRPG.Domain.Abstractions.Context;
 using ManagementRPG.Domain.Global.Campanhas.Repositories;
 using ManagementRPG.Domain.Security.System.Repositories;
 using ManagementRPG.Domain.Security.Usuarios.Repositories;
-using ManagementRPG.Domain.Shared.ApiConfig.Authentication;
+using ManagementRPG.Domain.Shared.ApiConfig.Settings;
 using ManagementRPG.Infrastructure.Authentication;
 using ManagementRPG.Infrastructure.Clock;
 using ManagementRPG.Infrastructure.Context;
@@ -37,7 +36,7 @@ namespace ManagementRPG.Infrastructure
 
             AddAuthentication(services, configuration);
 
-            AddAuthorization(services);
+            //AddAuthorization(services);
 
             AddHealthChecks(services, configuration);
 
@@ -60,11 +59,11 @@ namespace ManagementRPG.Infrastructure
             //Security - Entitys
             services.AddScoped<ISistemaRepository, SistemaRepository>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-            //services.AddScoped<CampanhaHandler, CampanhaHandler>();
+            services.AddScoped<IUsuarioPerfilRepository, UsuarioPerfilRepository>();
+            services.AddScoped<IUsuarioAuthLogRepository, UsuarioAuthLogRepository>();
 
             //Global - Entitys
             services.AddScoped<ICampanhaRepository, CampanhaRepository>();
-            services.AddScoped<CampanhaHandler, CampanhaHandler>();
 
             //SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
         }
@@ -72,10 +71,10 @@ namespace ManagementRPG.Infrastructure
         private static void AddAuthentication(IServiceCollection services, IConfiguration configuration)
         {
             //AppSettings
-            services.AddSingleton<IAppAuthSettings>(configuration.GetSection("GeneralSettings").Get<AppAuthSettings>()!);
+            services.AddSingleton<IAuthSettings>(configuration.GetSection("Authentication").Get<AppAuthSettings>()!);
 
             // Obtém a seção "AppSettings" do arquivo de configuração
-            var appSettingsSection = configuration.GetSection("GeneralSettings");
+            var appSettingsSection = configuration.GetSection("Authentication");
 
             // Configura a classe AppSettings para ser injetada via DI
             services.Configure<AppAuthSettings>(appSettingsSection);
@@ -97,15 +96,17 @@ namespace ManagementRPG.Infrastructure
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key), // Usa a chave secreta do AppSettings
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
-                    ValidateAudience = false,
+                    ValidateAudience = true,
+                    //ValidAudience = appSettings?.Audience
                 };
             });
         }
 
         private static void AddAuthorization(IServiceCollection services)
         {
+
         }
 
         private static void AddCaching(IServiceCollection services, IConfiguration configuration)

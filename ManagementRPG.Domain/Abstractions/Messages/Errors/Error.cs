@@ -1,6 +1,6 @@
-﻿namespace ManagementRPG.Domain.Abstractions.Errors
+﻿namespace ManagementRPG.Domain.Abstractions.Messages.Errors
 {
-    public record Error(string Code, string Name, List<string>? Messages = null)
+    public sealed record Error(string Code, string Name, List<string>? Messages = null) : IMessage
     {
         public static readonly Error None = new(string.Empty, string.Empty);
 
@@ -13,7 +13,7 @@
 
         public static Error FromValidationError(string code, string name, string message)
         {
-            return new Error(code, name, new List<string> { message });
+            return new Error(code, name, [message]);
         }
 
         public override string ToString()

@@ -54,7 +54,7 @@ namespace ManagementRPG.API.Controllers.Security.Usuarios
             if (resultLogin.IsFailure)
                 return Unauthorized(resultLogin);
 
-            return Ok();//new { Token = result.Value };
+            return Ok(resultLogin);//new { Token = result.Value };
         }
 
         [HttpPut]

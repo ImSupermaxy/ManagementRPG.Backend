@@ -1,7 +1,8 @@
 ﻿using ManagementRPG.Domain.Abstractions.Commands.Inserts;
 using ManagementRPG.Domain.Abstractions.Commands.Updates;
 using ManagementRPG.Domain.Abstractions.Entities;
-using ManagementRPG.Domain.Abstractions.Errors;
+using ManagementRPG.Domain.Abstractions.Messages.Errors;
+using ManagementRPG.Domain.Abstractions.Messages.Successes;
 using ManagementRPG.Domain.Abstractions.Repositories;
 using ManagementRPG.Domain.Abstractions.Responses;
 using ManagementRPG.Domain.Shared.ApiConfig;
@@ -34,17 +35,17 @@ namespace ManagementRPG.Domain.Abstractions.Handlers
                 var entity = Mapper.Map<T>(command);
 
                 if (!entity.IsValid)
-                    return Result.Failure<TId>(EntityError<T, TId>.Invalid, entity.GetErrors());
+                    return Result.Failure<TId>(EntityError<T>.Invalid, entity.GetErrors());
 
                 var newId = await Repository.Insert(entity);
                 if (newId == IdentifierTypeManager<TId>.GetDefaultValue())
-                    return Result.Failure<TId>(EntityError<T, TId>.NotCreated);
+                    return Result.Failure<TId>(EntityError<T>.NotCreated);
 
-                return Result.Success(newId);
+                return Result.Success(newId, SuccessEntityTask<T, TId>.Post, SuccessTask.GetRunedMethodName());
             }
             catch (Exception ex)
             {
-                return Result.Failure<TId>(EntityError<T, TId>.NotCreated, [ex.Message]);
+                return Result.Failure<TId>(SystemError.CatchedException, [ex.Message]);
             }
         }
 
@@ -54,21 +55,21 @@ namespace ManagementRPG.Domain.Abstractions.Handlers
             {
                 var query = await Repository.GetById(command.Id);
                 if (query is null)
-                    return Result.Failure(EntityError<T, TId>.Invalid);
+                    return Result.Failure(EntityError<T>.Invalid);
 
                 var entity = Mapper.Map<T>(command);
 
                 if (!entity.IsValid)
-                    return Result.Failure(EntityError<T, TId>.Invalid, entity.GetErrors());
+                    return Result.Failure(EntityError<T>.Invalid, entity.GetErrors());
 
                 if (!(await Repository.Update(entity)))
-                    return Result.Failure(EntityError<T, TId>.NotUpdated);
+                    return Result.Failure(EntityError<T>.NotUpdated);
 
-                return Result.Success();
+                return Result.Success(SuccessEntityTask<T, TId>.Put, SuccessTask.GetRunedMethodName());
             }
             catch (Exception ex)
             {
-                return Result.Failure(EntityError<T, TId>.NotUpdated, [ex.Message]);
+                return Result.Failure(SystemError.CatchedException, [ex.Message]);
             }
         }
 
@@ -107,13 +108,13 @@ namespace ManagementRPG.Domain.Abstractions.Handlers
             {
                 var result = await Repository.GetAll();
                 if (result == null)
-                    return Result.Failure<IEnumerable<TResponse>>(EntityError<T, TId>.NotFound);
+                    return Result.Failure<IEnumerable<TResponse>>(EntityError<T>.NotFound);
 
-                return Result.Success(result);
+                return Result.Success(result, SuccessEntityTask<T, TId>.Get, SuccessTask.GetRunedMethodName());
             }
             catch (Exception ex)
             {
-                return Result.Failure<IEnumerable<TResponse>>(EntityError<T, TId>.NotFound, [ex.Message]);
+                return Result.Failure<IEnumerable<TResponse>>(SystemError.CatchedException, [ex.Message]);
             }
         }
 
@@ -123,13 +124,13 @@ namespace ManagementRPG.Domain.Abstractions.Handlers
             {
                 var result = await Repository.GetById(id);
                 if (result == null)
-                    return Result.Failure<TResponse>(EntityError<T, TId>.NotFound);
+                    return Result.Failure<TResponse>(EntityError<T>.NotFound);
 
-                return Result.Success(result);
+                return Result.Success(result, SuccessEntityTask<T, TId>.Get, SuccessTask.GetRunedMethodName());
             }
             catch (Exception ex)
             {
-                return Result.Failure<TResponse>(EntityError<T, TId>.NotFound);
+                return Result.Failure<TResponse>(SystemError.CatchedException);
             }
         }
     }
