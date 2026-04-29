@@ -217,7 +217,7 @@ namespace ManagementRPG.Application.Security.Usuarios.Handlers
                 var token = tokenHandler.CreateToken(new SecurityTokenDescriptor
                 {
                     Issuer = Settings.Sender,
-                    //Audience = Settings.ValidAt,
+                    Audience = Settings.Audience,
                     Subject = identityClaims,
                     Expires = DateTime.UtcNow.AddHours(Settings.ExpirationHours),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

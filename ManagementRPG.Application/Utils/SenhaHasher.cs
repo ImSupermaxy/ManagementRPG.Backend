@@ -24,7 +24,6 @@
             }
 
             return BCrypt.Net.BCrypt.Verify(senha, hash);
-
         }
     }
 }

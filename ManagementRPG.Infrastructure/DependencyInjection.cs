@@ -99,7 +99,7 @@ namespace ManagementRPG.Infrastructure
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
                     ValidateAudience = true,
-                    //ValidAudience = appSettings?.Audience
+                    ValidAudience = appSettings?.Audience
                 };
             });
         }
