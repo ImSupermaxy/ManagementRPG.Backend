@@ -12,7 +12,7 @@ namespace ManagementRPG.Domain.Abstractions.Repositories
         where TResponse : IResponse<TId>
     {
         protected readonly IUnitOfWork Uow;
-        private string _numberTable = "";
+        protected string _numberTable = "";
 
         public Repository(IUnitOfWork uow, string numberTable)
         {

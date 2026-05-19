@@ -20,4 +20,9 @@
     <ProjectReference Include="..\ManagementRPG.Domain\ManagementRPG.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Security\System\DTOs\" />
+    <Folder Include="Security\Usuarios\DTOs\" />
+  </ItemGroup>
+
 </Project>

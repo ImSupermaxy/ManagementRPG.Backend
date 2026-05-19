@@ -1,5 +1,7 @@
 ﻿using ManagementRPG.Application.Global.Campanhas.Commands;
+using ManagementRPG.Application.Global.Campanhas.DTOs;
 using ManagementRPG.Domain.Global.Campanhas.Entities;
+using ManagementRPG.Domain.Global.Campanhas.Responses;
 using ManagementRPG.Domain.Global.Campanhas.Validators;
 using V4MAutoMapper;
 
@@ -21,9 +23,8 @@ namespace ManagementRPG.Application.Global.Campanhas.Profiles
                     new CampanhaValidator(e).ValidateEntity());
 
             //Passar os DTOS aqui tbm..
-            //CreateMap<SistemaQueryResult, Sistema>()
-            //     .ConstructUsing(s => { return new Sistema(s.UserId, s.Nome, s.Versao); })
-            //     .AfterMap((c, s) => s.Validate());
+            CreateMap<CampanhaResponse, CampanhaJogadorDTO>()
+                 .ForAllMembers(r => r.UseDestinationValue());
         }
     }
 }

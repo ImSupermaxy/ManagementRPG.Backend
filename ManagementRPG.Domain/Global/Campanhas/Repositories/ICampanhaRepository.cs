@@ -6,5 +6,7 @@ namespace ManagementRPG.Domain.Global.Campanhas.Repositories
 {
     public interface ICampanhaRepository : IRepository<Campanha, int, int, CampanhaResponse>
     {
+        Task<IEnumerable<CampanhaResponse>> GetByJogadorId(int jogadorId);
+        Task<IEnumerable<CampanhaResponse>> GetByMestreId(int mestreId);
     }
 }

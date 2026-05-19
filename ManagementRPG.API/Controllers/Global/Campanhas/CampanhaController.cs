@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ManagementRPG.API.Controllers.Global.Campanhas
 {
-
     [ApiController]
     [ApiVersion(ApiVersions.Version)]
     [Route("api/v{version:apiVersion}/campanha")]
